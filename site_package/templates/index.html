@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<h2>Anime List</h2>
+
+<ul>
+{% for anime in animes %}
+<li>
+    <p>{{ anime.name }}</p>
+    <p>{{ anime.release }}</p>
+    <p>{{ anime.description }}</p>
+    <p>{{ anime.grade }}</p>
+    <p>{{ anime.alternative_name }}</p>
+    <p>{{ anime.img }}</p>
+
+    <hr>
+</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

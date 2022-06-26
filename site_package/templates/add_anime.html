@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{ cat }}">{{ msg }}</div>
+{% endfor %}
+
+<form action="{{ url_for('add_anime') }}" method="POST" enctype="multipart/form-data">
+    <p><label>Name: </label> <input type="text" name="name" required></p>
+    <p><label>Alternative Name: </label> <input type="text" name="alternative_name"></p>
+    <p><label>Release: </label> <input type="date" name="release" required></p>
+    <p><label>Description: </label></p>
+    <p><textarea name="desription" rows=7 cols=40></textarea></p>
+    <p><label>Grade: </label> <input type="number" name="grade" max=100 min=0></p>
+    <p><label>Img: </label> <input type="file" name="img"></p>
+    <br>
+    <p><input type="submit" value="Send"></p>
+</form>
+{% endblock %}
