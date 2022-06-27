@@ -2,13 +2,13 @@
 
 {% block content %}
 {{ super() }}
-{% for cat, msg in get_flashed_messages(True) %}
-<div class="flash {{ cat }}">{{ msg }}</div>
-{% endfor %}
 
-<form action="/login" method="POST">
-    <p><label>Name: </label> <input type="text" name="username" value="" required></p>
-    <p><label>Password: </label> <input type="text" name="psw" value="" required></p>
-    <p><input type="submit" value="Send"></p>
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.email.label }} {{ form.email(placeholder="Email") }} <br>
+    {{ form.password.label }} {{ form.password(placeholder="Password") }} <br>
+    <br>
+    {{ form.submit }}
 </form>
 {% endblock %}

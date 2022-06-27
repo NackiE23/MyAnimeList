@@ -2,10 +2,6 @@
 
 {% block content %}
 {{ super() }}
-{% for cat, msg in get_flashed_messages(True) %}
-<div class="flash {{ cat }}">{{ msg }}</div>
-{% endfor %}
-
 <form action="{{ url_for('add_anime') }}" method="POST" enctype="multipart/form-data">
     <p><label>Name: </label> <input type="text" name="name" required></p>
     <p><label>Alternative Name: </label> <input type="text" name="alternative_name"></p>

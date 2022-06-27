@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if current_user.is_authenticated %}
+  <h1>{{ current_user.name }}</h1>
+{% endif %}
+
 {{ super() }}
 
 <h2>Anime List</h2>
