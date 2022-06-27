@@ -36,7 +36,7 @@ class Anime(db.Model):
     release = db.Column(db.Date(), nullable=False)
     description = db.Column(db.String(length=1024), nullable=True)
     grade = db.Column(db.Integer(), nullable=True)
-    img = db.Column(db.LargeBinary)
+    img = db.Column(db.String(), nullable=True)
 
     def __repr__(self):
         return self.name

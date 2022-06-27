@@ -6,8 +6,8 @@ from site_package.models import User
 
 
 class AddAnimeForm(FlaskForm):
-    name = StringField(label="Name", validators=[Length(60), DataRequired()])
-    alternative_name = StringField(label="Alternative name", validators=[Length(60)])
+    name = StringField(label="Name", validators=[DataRequired()])
+    alternative_name = StringField(label="Alternative name")
     description = TextAreaField(label="Description")
     grade = IntegerField(label="Grade")
     release = DateField(label="Release", validators=[DataRequired()])
