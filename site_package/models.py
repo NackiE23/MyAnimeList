@@ -9,10 +9,13 @@ def load_user(user_id):
 
 
 class User(db.Model, UserMixin):
+    __tablename__ = "user"
+
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(length=60), nullable=False)
     email = db.Column(db.String(length=100), nullable=False, unique=True)
     password_hash = db.Column(db.String(length=60), nullable=False)
+    anime_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('user', lazy=True))
 
     def __repr__(self):
         return self.name
@@ -29,7 +32,16 @@ class User(db.Model, UserMixin):
         return bcrypt.check_password_hash(self.password_hash, password)
 
 
+anime_categories = db.Table(
+    'anime_category',
+    db.Column('anime_id', db.Integer, db.ForeignKey('anime.id'), primary_key=True),
+    db.Column('category_id', db.Integer, db.ForeignKey('category.id'), primary_key=True),
+)
+
+
 class Anime(db.Model):
+    __tablename__ = "anime"
+
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(length=60), nullable=False)
     alternative_name = db.Column(db.String(length=60), nullable=True)
@@ -37,6 +49,41 @@ class Anime(db.Model):
     description = db.Column(db.String(length=1024), nullable=True)
     grade = db.Column(db.Integer(), nullable=True)
     img = db.Column(db.String(), nullable=True)
+    categories = db.relationship("Category", secondary=anime_categories, lazy='subquery',
+                                 backref=db.backref('animes', lazy=True))
+    user_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('anime', lazy=True))
 
     def __repr__(self):
         return self.name
+
+
+class Category(db.Model):
+    __tablename__ = "category"
+
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(length=40), nullable=False, unique=True)
+
+    def __repr__(self):
+        return self.name
+
+
+class ListCategory(db.Model):
+    __tablename__ = "list_category"
+
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(length=40), nullable=False, unique=True)
+    user_anime_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('list_category', lazy=True))
+
+    def __repr__(self):
+        return self.name
+
+
+class UserAnimeList(db.Model):
+    __tablename__ = "user_anime_list"
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'), primary_key=True)
+    list_category_id = db.Column(db.Integer, db.ForeignKey('list_category.id'), primary_key=True)
+
+    def __repr__(self):
+        return f"self.user_id"

@@ -53,6 +53,9 @@ def register_page():
                               password=form.password1.data)
         db.session.add(user_to_create)
         db.session.commit()
+
+        login_user(user_to_create)
+
         return redirect(url_for('index_page'))
 
     if form.errors:
