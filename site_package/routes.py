@@ -1,8 +1,8 @@
 import os.path
 import uuid
 
-from flask import render_template, redirect, url_for, flash
-from flask_login import login_user
+from flask import render_template, redirect, url_for, flash, request
+from flask_login import login_user, logout_user
 from werkzeug.utils import secure_filename
 
 from site_package import app, db
@@ -69,15 +69,29 @@ def register_page():
 def login_page():
     form = LoginForm()
 
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and user.check_password_if_exists(form.password.data):
-            login_user(user)
+    if request.method == "POST":
+        try:
+            if form.validate_on_submit():
+                user = User.query.filter_by(email=form.email.data).first()
+                if user and user.check_password_if_exists(form.password.data):
+                    login_user(user)
 
-            return redirect(url_for('index_page'))
+                    return redirect(url_for('index_page'))
+                if not user:
+                    flash(f"User with that email does not exist!")
 
-    if form.errors:
+        except ValueError:
+            flash(f"Email and password does not match!")
+
+    if form.errors != {}:
         for error in form.errors.values():
             flash(f"Error: {error}", category="danger")
 
     return render_template('login.html', title='Login page', form=form)
+
+
+@app.route('/logout/')
+def logout_page():
+    logout_user()
+
+    return redirect(url_for('index_page'))

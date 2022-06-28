@@ -16,8 +16,13 @@
     <ul>
         <li><a href="{{ url_for('index_page') }}">Index</a></li>
         <li><a href="{{ url_for('add_anime_page') }}">Add anime</a></li>
-        <li><a href="{{ url_for('login_page') }}">Login</a></li>
+
+        {% if current_user.is_authenticated %}
+        <li><a href="{{ url_for('logout_page') }}">Log Out</a></li>
+        {% else %}
+        <li><a href="{{ url_for('login_page') }}">Log In</a></li>
         <li><a href="{{ url_for('register_page') }}">Register</a></li>
+        {% endif %}
     </ul>
 <hr>
     {% endblock -%}
