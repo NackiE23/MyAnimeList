@@ -2,28 +2,32 @@
 
 {% block content %}
 {{ super() }}
-
 <div class="container">
     <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
 
-        <p>
-            Image preview: <br>
-            <img src="" id="preview-image" class="img-fluid" alt="Image doesn`t upload" style="max-width: 500px;">
+        {% if anime.img %}
+        <p>Image preview: <br>
+            <img src="{{ anime.img }}" id="preview-image" class="img-fluid" alt="Anime doesn`t have an image" style="max-width: 500px;">
         </p>
+        {% else %}
+        <p>Image preview: <br>
+            <img src="" id="preview-image" class="img-fluid" alt="Anime doesn`t have an image" style="max-width: 500px;">
+        </p>
+        {% endif %}
         {{ form.img.label(class="form-label") }}
         {{ form.img(class="form-control", id="id_image") }}
 
         {{ form.name.label(class="form-label") }}
-            {{ form.name(class="form-control") }}
+            {{ form.name(value=anime.name, class="form-control") }}
         {{ form.alternative_name.label(class="form-label") }}
-            {{ form.alternative_name(class="form-control") }}
+            {{ form.alternative_name(value=anime.alternative_name, class="form-control") }}
         {{ form.release.label(class="form-label") }}
-            {{ form.release(class="form-control") }}
+            {{ form.release(value=anime.release, class="form-control") }}
         {{ form.description.label(class="form-label") }}
-            {{ form.description(class="form-control") }}
+            <textarea name="description" class="form-control">{{ anime.description }}</textarea>
         {{ form.grade.label(class="form-label") }}
-            {{ form.grade(class="form-control") }}
+            {{ form.grade(value=anime.grade, class="form-control") }}
 
         <div class="container">
             <div class="row">
@@ -40,18 +44,21 @@
                     Remove Category
                     <select name="current_categories" class="form-select" id="remove_category">
                         <option selected>Select category</option>
+                        {% for category in anime.categories %}
+                            <option value="{{ category.name }}">{{ category.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <input type="text" class="form-control" id="anime_categories" name="categories" readonly>
+                    <input type="text" class="form-control" id="anime_categories" name="categories" value="{{ anime.categories_to_text() }}" readonly>
                 </div>
             </div>
         </div>
 
         <br>
-        {{ form.submit }}
+        {{ form.submit(value="Save changes", class="btn btn-secondary") }}
     </form>
 </div>
 {% endblock %}

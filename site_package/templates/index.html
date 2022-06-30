@@ -1,24 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if current_user.is_authenticated %}
-  <h1>{{ current_user.name }}</h1>
-{% endif %}
-
 {{ super() }}
 
-<h2>Anime List</h2>
+<h2>Own Anime List</h2>
 
 <ul>
 {% for anime in animes %}
 <li>
-    <p>{{ anime.name }}</p>
-    <p>{{ anime.release }}</p>
-    <p>{{ anime.description }}</p>
-    <p>{{ anime.grade }}</p>
-    <p>{{ anime.alternative_name }}</p>
-    <p>{{ anime.categories }}</p>
+    <p>Name: {{ anime.name }}</p>
+    <p>Alternative Name: {{ anime.alternative_name }}</p>
+    <p>Release: {{ anime.release }}</p>
+    <p>Description: {{ anime.description }}</p>
+    <p>Grade: {{ anime.grade }}</p>
+    <p>Categories: {{ anime.categories }}</p>
     <p><img src="{{ anime.img }}" alt="#" height=100px></p>
+    <p><a href="{{ url_for('change_anime_page', anime_id=anime.id) }}">Change Information</a></p>
 
     <hr>
 </li>

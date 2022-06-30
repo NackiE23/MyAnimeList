@@ -49,15 +49,18 @@ class Anime(db.Model):
     description = db.Column(db.String(length=1024), nullable=True)
     grade = db.Column(db.Integer(), nullable=True)
     img = db.Column(db.String(), nullable=True)
-    categories = db.relationship("Category", secondary=anime_categories, lazy='subquery',
+    categories = db.relationship("AnimeCategory", secondary=anime_categories, lazy='subquery',
                                  backref=db.backref('animes', lazy=True))
     user_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('anime', lazy=True))
 
     def __repr__(self):
         return self.name
 
+    def categories_to_text(self):
+        return " ".join([c.name for c in self.categories])
 
-class Category(db.Model):
+
+class AnimeCategory(db.Model):
     __tablename__ = "category"
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -86,4 +89,4 @@ class UserAnimeList(db.Model):
     list_category_id = db.Column(db.Integer, db.ForeignKey('list_category.id'), primary_key=True)
 
     def __repr__(self):
-        return f"self.user_id"
+        return f"{self.user} {self.anime} {self.list_category}"

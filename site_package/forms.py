@@ -5,7 +5,7 @@ from wtforms.validators import Length, DataRequired, EqualTo, ValidationError, E
 from site_package.models import User
 
 
-class AddAnimeForm(FlaskForm):
+class AnimeModelForm(FlaskForm):
     name = StringField(label="Name", validators=[DataRequired()])
     alternative_name = StringField(label="Alternative name")
     description = TextAreaField(label="Description")

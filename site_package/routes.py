@@ -6,8 +6,19 @@ from flask_login import login_user, logout_user
 from werkzeug.utils import secure_filename
 
 from site_package import app, db
-from site_package.forms import RegisterForm, LoginForm, AddAnimeForm
-from site_package.models import Anime, User
+from site_package.forms import RegisterForm, LoginForm, AnimeModelForm
+from site_package.models import Anime, User, AnimeCategory
+
+
+def compare_category_with_name(anime_categories: list, categories_name: list) -> bool:
+    if len(anime_categories) != len(categories_name):
+        return True
+
+    for pk, category in enumerate(anime_categories):
+        if category.name not in categories_name[pk]:
+            return True
+
+    return False
 
 
 @app.route('/')
@@ -17,9 +28,9 @@ def index_page():
 
 @app.route('/add_anime/', methods=['GET', 'POST'])
 def add_anime_page():
-    form = AddAnimeForm()
+    form = AnimeModelForm()
 
-    if form.validate_on_submit():
+    if request.method == "POST" and form.validate_on_submit():
         anime = Anime(name=form.name.data, release=form.release.data)
 
         if alter_name := form.alternative_name.data:
@@ -32,15 +43,65 @@ def add_anime_page():
             filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
             img.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], filename))
             anime.img = os.path.join(app.config['UPLOAD_FOLDER'][1:], filename)
+        if categories := request.form.get('categories', '').split():
+            for category in categories:
+                obj = AnimeCategory.query.filter_by(name=category).first()
+                anime.categories.append(obj)
 
         db.session.add(anime)
         db.session.commit()
+
+        flash(f"Anime {anime.name} added!", category="success")
 
     if form.errors:
         for error in form.errors.values():
             flash(f"Error: {error}", category="danger")
 
-    return render_template('add_anime.html', title='Add anime', form=form)
+    return render_template('add_anime.html', title='Add anime', form=form, categories=AnimeCategory.query.all())
+
+
+@app.route('/change_anime/<int:anime_id>/', methods=['GET', 'POST'])
+def change_anime_page(anime_id):
+    anime = Anime.query.get_or_404(anime_id)
+    available_categories = [c for c in AnimeCategory.query.all() if c not in anime.categories]
+
+    form = AnimeModelForm()
+
+    if request.method == "POST" and form.validate_on_submit():
+
+        if form.name.data and form.name.data != anime.name:
+            anime.name = form.name.data
+        if form.alternative_name.data and form.alternative_name.data != anime.alternative_name:
+            anime.alternative_name = form.alternative_name.data
+        if form.release.data and form.release.data != anime.release:
+            anime.release = form.release.data
+        if form.description.data and form.description.data != anime.description:
+            anime.description = form.description.data
+        if form.grade.data and form.grade.data != anime.grade:
+            anime.grade = form.grade.data
+        if img := form.img.data:
+            filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
+            img.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], filename))
+            anime.img = os.path.join(app.config['UPLOAD_FOLDER'][1:], filename)
+
+        categories = request.form.get('categories', '').split()
+        if categories and compare_category_with_name(anime.categories, categories):
+            category_objs = []
+            for category in categories:
+                obj = AnimeCategory.query.filter_by(name=category).first()
+                category_objs.append(obj)
+            anime.categories = category_objs
+
+        db.session.commit()
+
+        flash(f"Changes have been saved", category="success")
+        return redirect(url_for('index_page'))
+
+    if form.errors:
+        for error in form.errors.values():
+            flash(f"Error: {error}", category="danger")
+
+    return render_template('change_anime.html', title="Change anime", form=form, anime=anime, categories=available_categories)
 
 
 @app.route('/register/', methods=['GET', 'POST'])
@@ -55,6 +116,7 @@ def register_page():
         db.session.commit()
 
         login_user(user_to_create)
+        flash(f"You have successfully logged in as {user_to_create.name}", category="success")
 
         return redirect(url_for('index_page'))
 
@@ -75,6 +137,7 @@ def login_page():
                 user = User.query.filter_by(email=form.email.data).first()
                 if user and user.check_password_if_exists(form.password.data):
                     login_user(user)
+                    flash(f"You have successfully logged in as {user.name}", category="success")
 
                     return redirect(url_for('index_page'))
                 if not user:
@@ -93,5 +156,6 @@ def login_page():
 @app.route('/logout/')
 def logout_page():
     logout_user()
+    flash("You have successfully loged out", category="success")
 
     return redirect(url_for('index_page'))
