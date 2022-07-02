@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block style %}
+<style>
+    .anime {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid black;
+        transition: .3s;
+    }
+    .anime:hover {
+        box-shadow: 0 1px 10px black;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+<h1>Own Anime List</h1>
+
+{% for anime in animes %}
+<div class="container">
+    <div class="anime">
+        <div class="row">
+            <h2>{{ anime.name }} [{{ anime.grade }}]</h2>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                {% if anime.img %}
+                    <img src="{{ anime.img }}" class="img-fluid" alt="#">
+                {% else %}
+                    <img src="#" class="img-fluid" alt="#">
+                {% endif %}
+            </div>
+            <div class="col-8">
+                <h4>{{ anime.release }}</h4>
+                <p>{{ anime.alternative_name }}</p>
+                <p>{{ anime.description }}</p>
+                <ul>
+                    {% for c in anime.categories %}
+                    <li>{{ c }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <a href="{{ url_for('change_anime_page', anime_id=anime.id) }}">Change Information</a>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

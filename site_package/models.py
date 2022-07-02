@@ -47,7 +47,7 @@ class Anime(db.Model):
     alternative_name = db.Column(db.String(length=60), nullable=True)
     release = db.Column(db.Date(), nullable=False)
     description = db.Column(db.String(length=1024), nullable=True)
-    grade = db.Column(db.Integer(), nullable=True)
+    grade = db.Column(db.Integer(), nullable=True, default=0)
     img = db.Column(db.String(), nullable=True)
     categories = db.relationship("AnimeCategory", secondary=anime_categories, lazy='subquery',
                                  backref=db.backref('animes', lazy=True))

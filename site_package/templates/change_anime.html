@@ -27,7 +27,11 @@
         {{ form.description.label(class="form-label") }}
             <textarea name="description" class="form-control">{{ anime.description }}</textarea>
         {{ form.grade.label(class="form-label") }}
-            {{ form.grade(value=anime.grade, class="form-control") }}
+            {% if anime.grade %}
+                {{ form.grade(min=0, max=100, value=anime.grade, class="form-control") }}
+            {% else %}
+                {{ form.grade(value=0, min=0, max=100, class="form-control") }}
+            {% endif %}
 
         <div class="container">
             <div class="row">

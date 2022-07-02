@@ -23,7 +23,12 @@ def compare_category_with_name(anime_categories: list, categories_name: list) ->
 
 @app.route('/')
 def index_page():
-    return render_template('index.html', title="Index page", animes=Anime.query.all())
+    return render_template('anime_list.html', title="Index page", animes=Anime.query.all())
+
+
+@app.route('/seasonal/')
+def seasonal_page():
+    return render_template('seasonal_animes.html', title="Seasonal Animes", animes=Anime.query.all())
 
 
 @app.route('/add_anime/', methods=['GET', 'POST'])

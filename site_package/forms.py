@@ -6,6 +6,10 @@ from site_package.models import User
 
 
 class AnimeModelForm(FlaskForm):
+    def validate_grade(self, grade_to_check):
+        if 0 > grade_to_check.data or grade_to_check.data > 100:
+            raise ValidationError("Grade must be in the range from 0 to 100!")
+
     name = StringField(label="Name", validators=[DataRequired()])
     alternative_name = StringField(label="Alternative name")
     description = TextAreaField(label="Description")

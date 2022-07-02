@@ -7,6 +7,8 @@
       {% block title -%}
       <title>{{ title }}</title>
       {% endblock %}
+      {% block style -%}
+      {% endblock %}
    </head>
    <body class="text-center" style="padding-bottom: 20px;">
       {% block content -%}
@@ -20,6 +22,9 @@
                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
                      <a class="nav-link" href="{{ url_for('index_page') }}">Index</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="{{ url_for('seasonal_page') }}">Seasonal</a>
                   </li>
                   <li class="nav-item">
                      <a class="nav-link" href="{{ url_for('add_anime_page') }}">Add anime</a>

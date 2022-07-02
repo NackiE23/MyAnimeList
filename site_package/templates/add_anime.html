@@ -23,7 +23,7 @@
         {{ form.description.label(class="form-label") }}
             {{ form.description(class="form-control") }}
         {{ form.grade.label(class="form-label") }}
-            {{ form.grade(class="form-control") }}
+            {{ form.grade(value=0, min=0, max=100, class="form-control") }}
 
         <div class="container">
             <div class="row">
