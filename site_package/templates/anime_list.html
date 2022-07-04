@@ -1,28 +1,46 @@
 {% extends "base.html" %}
 
-{% block style %}
-<style>
-    .anime {
-        margin: 10px 0;
-        padding: 10px;
-        border: 1px solid black;
-        transition: .3s;
-    }
-    .anime:hover {
-        box-shadow: 0 1px 10px black;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 {{ super() }}
 <h1>Own Anime List</h1>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-secondary">
+            <div class="modal-header">
+                <h5 class="modal-title">Add <span id="modal-anime-name"></span> to list</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Select a list(s) which you like</p>
+                <div class="container" role="group">
+                    {% for c in list_categories %}
+                        <input type="checkbox" class="btn-check" value="{{ c.id }}" name="list_category_name" id="btncheck{{ c.id }}" autocomplete="off">
+                        <label class="btn btn-outline-light m-1" for="btncheck{{ c.id }}">{{ c.name }}</label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="add-anime-to-list" class="btn btn-light" data-bs-dismiss="modal">Add</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {% for anime in animes %}
 <div class="container">
     <div class="anime">
         <div class="row">
-            <h2>{{ anime.name }} [{{ anime.grade }}]</h2>
+            <h2>{{ anime.name }} <span class="badge bg-secondary">[{{ anime.grade }}/100]</span></h2>
+        </div>
+        <div class="row text-center p-1">
+            <ul class="list-group list-group-horizontal justify-content-center" style="overflow-y: scroll;">
+                {% for c in anime.categories %}
+                    <li class="list-group-item text-bg-secondary mb-3 me-2 py-1 px-3">{{ c }}</li>
+                {% endfor %}
+            </ul>
         </div>
         <div class="row">
             <div class="col-4">
@@ -33,20 +51,60 @@
                 {% endif %}
             </div>
             <div class="col-8">
-                <h4>{{ anime.release }}</h4>
-                <p>{{ anime.alternative_name }}</p>
-                <p>{{ anime.description }}</p>
-                <ul>
-                    {% for c in anime.categories %}
-                    <li>{{ c }}</li>
-                    {% endfor %}
-                </ul>
+                <h4>Release: {{ anime.normalize_release() }}</h4>
+                <p></p>
+                <p>Decription:<br>
+                    {{ anime.description }}
+                </p>
+                {% if current_user.is_authenticated %}
+                    <p>
+                        <button class="btn btn-secondary openModal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-anime-id="{{ anime.id }}" data-anime-name="{{ anime.name }}">
+                            Add To My List
+                        </button>
+                    </p>
+                {% endif %}
+                <p>
+                    <a class="btn btn-secondary" href="{{ url_for('change_anime_page', anime_id=anime.id) }}">
+                        Change Informartion
+                    </a>
+                </p>
             </div>
-        </div>
-        <div class="row">
-            <a href="{{ url_for('change_anime_page', anime_id=anime.id) }}">Change Information</a>
         </div>
     </div>
 </div>
 {% endfor %}
+{% endblock %}
+
+{% block script %}
+<script>
+    $('.openModal').click(function() {
+        animeName = $(this).attr('data-anime-name');
+        animeId = $(this).attr('data-anime-id');
+        $('#modal-anime-name').html(animeName);
+        $('#add-anime-to-list').prop('data-anime-id', animeId);
+
+        $("input[name='list_category_name']:checked").each(function() {
+           $(this).prop('checked', false);
+        });
+    });
+
+    $('#add-anime-to-list').click(function() {
+        lc_ids = '';
+        $("input[name='list_category_name']:checked").each(function() {
+           lc_ids += ` ${this.value}`;
+        });
+        animeId = $(this).prop('data-anime-id');
+        console.log(lc_ids, animeId);
+
+        $.ajax({
+            url: '',
+            type: 'POST',
+            data: {
+                str_list_category_ids: lc_ids,
+                user_id: {% if current_user.is_authenticated %}{{ current_user.id }}{% else %}0{% endif%},
+                anime_id: animeId
+            }
+        });
+    });
+</script>
 {% endblock %}

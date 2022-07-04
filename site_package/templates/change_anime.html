@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+{% block style %}
+<style>
+    .bg-secondary {
+        color: white;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 {{ super() }}
 <div class="container">
@@ -16,38 +24,37 @@
         </p>
         {% endif %}
         {{ form.img.label(class="form-label") }}
-        {{ form.img(class="form-control", id="id_image") }}
+        {{ form.img(class="form-control bg-secondary", id="id_image") }}
 
         {{ form.name.label(class="form-label") }}
-            {{ form.name(value=anime.name, class="form-control") }}
+            {{ form.name(value=anime.name, class="form-control bg-secondary") }}
         {{ form.alternative_name.label(class="form-label") }}
-            {{ form.alternative_name(value=anime.alternative_name, class="form-control") }}
+            {{ form.alternative_name(value=anime.alternative_name, class="form-control bg-secondary") }}
         {{ form.release.label(class="form-label") }}
-            {{ form.release(value=anime.release, class="form-control") }}
+            {{ form.release(value=anime.release, class="form-control bg-secondary") }}
         {{ form.description.label(class="form-label") }}
-            <textarea name="description" class="form-control">{{ anime.description }}</textarea>
+            <textarea name="description" class="form-control bg-secondary">{{ anime.description }}</textarea>
         {{ form.grade.label(class="form-label") }}
             {% if anime.grade %}
-                {{ form.grade(min=0, max=100, value=anime.grade, class="form-control") }}
+                {{ form.grade(min=0, max=100, value=anime.grade, class="form-control bg-secondary") }}
             {% else %}
-                {{ form.grade(value=0, min=0, max=100, class="form-control") }}
+                {{ form.grade(value=0, min=0, max=100, class="form-control bg-secondary") }}
             {% endif %}
 
         <div class="container">
+            <br>
             <div class="row">
                 <div class="col">
-                    Add Category
-                    <select name="all_categories" class="form-select" id="add_category">
-                        <option selected>Select category</option>
+                    <select name="all_categories" class="form-select bg-secondary" id="add_category">
+                        <option selected>Add category</option>
                         {% for category in categories %}
                             <option value="{{ category.name }}">{{ category.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="col">
-                    Remove Category
-                    <select name="current_categories" class="form-select" id="remove_category">
-                        <option selected>Select category</option>
+                    <select name="current_categories" class="form-select bg-secondary" id="remove_category">
+                        <option selected>Remove category</option>
                         {% for category in anime.categories %}
                             <option value="{{ category.name }}">{{ category.name }}</option>
                         {% endfor %}
@@ -56,7 +63,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <input type="text" class="form-control" id="anime_categories" name="categories" value="{{ anime.categories_to_text() }}" readonly>
+                    <input type="text" class="form-control bg-secondary" id="anime_categories" name="categories" value="{{ anime.categories_to_text() }}" readonly>
                 </div>
             </div>
         </div>
@@ -68,7 +75,6 @@
 {% endblock %}
 
 {% block script %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
     $('form').on('change', '#id_image', function() {
         var src = URL.createObjectURL(this.files[0]);

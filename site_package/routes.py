@@ -7,10 +7,12 @@ from werkzeug.utils import secure_filename
 
 from site_package import app, db
 from site_package.forms import RegisterForm, LoginForm, AnimeModelForm
-from site_package.models import Anime, User, AnimeCategory
+from site_package.models import Anime, User, AnimeCategory, ListCategory, UserAnimeList
+from site_package.parsing import parse_season_page
 
 
 def compare_category_with_name(anime_categories: list, categories_name: list) -> bool:
+    # return len(anime_categories) == len(set([cat.name for cat in anime_categories] + categories_name))
     if len(anime_categories) != len(categories_name):
         return True
 
@@ -21,14 +23,36 @@ def compare_category_with_name(anime_categories: list, categories_name: list) ->
     return False
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index_page():
-    return render_template('anime_list.html', title="Index page", animes=Anime.query.all())
+    animes = Anime.query.all()
+    list_categories = ListCategory.query.all()
+
+    if request.method == "POST":
+        list_category_ids = request.form.get('str_list_category_ids', '').split()
+        user_id = request.form.get('user_id', '')
+        anime_id = request.form.get('anime_id', '')
+
+        if list_category_ids and user_id and anime_id:
+            for category in list_category_ids:
+                db.session.add(UserAnimeList(user_id=user_id, anime_id=anime_id, list_category_id=category))
+            db.session.commit()
+
+            flash(f"Anime successfuly added to your list(s)", category="success")
+            return redirect(request.url)
+
+        flash(f"Something went wrong", category="danger")
+        return redirect(request.url)
+
+    return render_template('anime_list.html', title="Index page", animes=animes, list_categories=list_categories)
 
 
 @app.route('/seasonal/')
 def seasonal_page():
-    return render_template('seasonal_animes.html', title="Seasonal Animes", animes=Anime.query.all())
+    animes = parse_season_page()
+    length = len(animes['name'])
+
+    return render_template('seasonal_animes.html', title="Seasonal Animes", length=length, animes=animes)
 
 
 @app.route('/add_anime/', methods=['GET', 'POST'])

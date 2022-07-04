@@ -4,6 +4,17 @@
 }
 
 body {
-    background-color: #c4c4c4;
-    color: black
+    background-color: #212121;
+    color: white;
+}
+
+.anime {
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid white;
+    transition: .3s;
+    background-color: #262626;
+}
+.anime:hover {
+    box-shadow: 0 1px 10px white;
 }

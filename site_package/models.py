@@ -59,6 +59,9 @@ class Anime(db.Model):
     def categories_to_text(self):
         return " ".join([c.name for c in self.categories])
 
+    def normalize_release(self):
+        return f"{number_to_month(self.release.month)} {self.release.day}, {self.release.year}"
+
 
 class AnimeCategory(db.Model):
     __tablename__ = "category"
@@ -90,3 +93,32 @@ class UserAnimeList(db.Model):
 
     def __repr__(self):
         return f"{self.user} {self.anime} {self.list_category}"
+
+
+def number_to_month(number):
+    if number == 1:
+        return "Jan"
+    elif number == 2:
+        return "Feb"
+    elif number == 3:
+        return "Mar"
+    elif number == 4:
+        return "Apr"
+    elif number == 5:
+        return "May"
+    elif number == 6:
+        return "Jun"
+    elif number == 7:
+        return "Jul"
+    elif number == 8:
+        return "Aug"
+    elif number == 9:
+        return "Sep"
+    elif number == 10:
+        return "Oct"
+    elif number == 11:
+        return "Nov"
+    elif number == 12:
+        return "Dec"
+    else:
+        return "???"
