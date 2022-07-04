@@ -11,16 +11,16 @@ from site_package.models import Anime, User, AnimeCategory, ListCategory, UserAn
 from site_package.parsing import parse_season_page
 
 
-def compare_category_with_name(anime_categories: list, categories_name: list) -> bool:
-    # return len(anime_categories) == len(set([cat.name for cat in anime_categories] + categories_name))
-    if len(anime_categories) != len(categories_name):
-        return True
-
-    for pk, category in enumerate(anime_categories):
-        if category.name not in categories_name[pk]:
-            return True
-
-    return False
+def compare_category_with_ids(anime_categories: list, categories_ids: list) -> bool:
+    return len(anime_categories) != len(set([cat.id for cat in anime_categories] + categories_ids))
+    # if len(anime_categories) != len(categories_name):
+    #     return True
+    #
+    # for pk, category in enumerate(anime_categories):
+    #     if category.name not in categories_name[pk]:
+    #         return True
+    #
+    # return False
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -72,10 +72,9 @@ def add_anime_page():
             filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
             img.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], filename))
             anime.img = os.path.join(app.config['UPLOAD_FOLDER'][1:], filename)
-        if categories := request.form.get('categories', '').split():
-            for category in categories:
-                obj = AnimeCategory.query.filter_by(name=category).first()
-                anime.categories.append(obj)
+        if categories := request.form.get('id_categories', '').split():
+            for category_id in categories:
+                anime.categories.append(AnimeCategory.query.get(category_id))
 
         db.session.add(anime)
         db.session.commit()
@@ -113,12 +112,11 @@ def change_anime_page(anime_id):
             img.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], filename))
             anime.img = os.path.join(app.config['UPLOAD_FOLDER'][1:], filename)
 
-        categories = request.form.get('categories', '').split()
-        if categories and compare_category_with_name(anime.categories, categories):
+        categories = request.form.get('id_categories', '').split()
+        if compare_category_with_ids(anime.categories, categories):
             category_objs = []
-            for category in categories:
-                obj = AnimeCategory.query.filter_by(name=category).first()
-                category_objs.append(obj)
+            for category_id in categories:
+                category_objs.append(AnimeCategory.query.get(category_id))
             anime.categories = category_objs
 
         db.session.commit()

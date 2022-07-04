@@ -40,7 +40,7 @@
                     <select name="all_categories" class="form-select bg-secondary" id="add_category">
                         <option selected>Add category</option>
                         {% for category in categories %}
-                            <option value="{{ category.name }}">{{ category.name }}</option>
+                            <option value="{{ category.name }}" data-category-id="{{ category.id }}">{{ category.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -53,6 +53,7 @@
             <div class="row">
                 <div class="col">
                     <input type="text" class="form-control bg-secondary" id="anime_categories" name="categories" readonly>
+                    <input type="hidden" id="anime_id_categories" name="id_categories" value="">
                 </div>
             </div>
         </div>
@@ -79,9 +80,11 @@
 	$('#add_category').on('change', function (e) {
         var optionSelected = $("option:selected", this);
         var valueSelected = this.value;
+        var idSelected = $("option:selected").attr('data-category-id');
 
         optionSelected.remove().appendTo($('#remove_category'));
         $('#anime_categories').val($('#anime_categories').val() + " " + valueSelected);
+        $('#anime_id_categories').val($('#anime_id_categories').val() + " " + idSelected);
 
         normalizeSelects();
     });
@@ -89,14 +92,15 @@
 
 	$('#remove_category').on('change', function (e) {
         var optionSelected = $("option:selected", this);
-        var valueSelected = this.value;
 
         optionSelected.remove().appendTo($('#add_category'));
 
         $('#anime_categories').val("")
+        $('#anime_id_categories').val("")
 
         $('#remove_category option:not(:first-child)').each(function() {
             $('#anime_categories').val($('#anime_categories').val() + " " + this.value);
+            $('#anime_id_categories').val($('#anime_id_categories').val() + " " + $(this).prop('data-category-id'));
         });
 
         normalizeSelects();

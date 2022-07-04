@@ -59,6 +59,9 @@ class Anime(db.Model):
     def categories_to_text(self):
         return " ".join([c.name for c in self.categories])
 
+    def categories_to_text_ids(self):
+        return " ".join([str(c.id) for c in self.categories])
+
     def normalize_release(self):
         return f"{number_to_month(self.release.month)} {self.release.day}, {self.release.year}"
 
