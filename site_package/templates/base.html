@@ -12,7 +12,7 @@
    </head>
    <body class="text-center" style="padding-bottom: 20px;">
       {% block content -%}
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-light">
          <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('index_page') }}">OAL</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,9 @@
                   </li>
                   <li class="nav-item">
                      <a class="nav-link" href="{{ url_for('add_anime_page') }}">Add anime</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="{{ url_for('my_lists_page') }}">My Lists</a>
                   </li>
                </ul>
                {% if current_user.is_authenticated %}

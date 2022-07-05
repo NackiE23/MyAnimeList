@@ -2,7 +2,7 @@ import os.path
 import uuid
 
 from flask import render_template, redirect, url_for, flash, request
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
 
 from site_package import app, db
@@ -13,14 +13,6 @@ from site_package.parsing import parse_season_page
 
 def compare_category_with_ids(anime_categories: list, categories_ids: list) -> bool:
     return len(anime_categories) != len(set([cat.id for cat in anime_categories] + categories_ids))
-    # if len(anime_categories) != len(categories_name):
-    #     return True
-    #
-    # for pk, category in enumerate(anime_categories):
-    #     if category.name not in categories_name[pk]:
-    #         return True
-    #
-    # return False
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -30,7 +22,7 @@ def index_page():
 
     if request.method == "POST":
         list_category_ids = request.form.get('str_list_category_ids', '').split()
-        user_id = request.form.get('user_id', '')
+        user_id = current_user.id
         anime_id = request.form.get('anime_id', '')
 
         if list_category_ids and user_id and anime_id:
@@ -53,6 +45,21 @@ def seasonal_page():
     length = len(animes['name'])
 
     return render_template('seasonal_animes.html', title="Seasonal Animes", length=length, animes=animes)
+
+
+@app.route('/my_lists/', methods=['GET'])
+def my_lists_page():
+    list_categories = ListCategory.query.all()
+
+    if request.args.get('list_category_id'):
+        list_category = ListCategory.query.get(request.args.get('list_category_id'))
+    else:
+        list_category = ListCategory.query.first()
+
+    animes = UserAnimeList.query.filter_by(user=current_user, list_category=list_category)
+
+    return render_template('my_lists.html', title="My Lists", list_categories=list_categories,
+                           list_category=list_category, animes=animes)
 
 
 @app.route('/add_anime/', methods=['GET', 'POST'])

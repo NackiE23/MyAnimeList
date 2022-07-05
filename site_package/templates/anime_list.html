@@ -5,10 +5,10 @@
 <h1>Own Anime List</h1>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-secondary">
             <div class="modal-header">
-                <h5 class="modal-title">Add <span id="modal-anime-name"></span> to list</h5>
+                <h5 class="modal-title">Add/Remove <span id="modal-anime-name"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -59,7 +59,7 @@
                 {% if current_user.is_authenticated %}
                     <p>
                         <button class="btn btn-secondary openModal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-anime-id="{{ anime.id }}" data-anime-name="{{ anime.name }}">
-                            Add To My List
+                            In My Lists
                         </button>
                     </p>
                 {% endif %}
@@ -101,7 +101,6 @@
             type: 'POST',
             data: {
                 str_list_category_ids: lc_ids,
-                user_id: {% if current_user.is_authenticated %}{{ current_user.id }}{% else %}0{% endif%},
                 anime_id: animeId
             }
         });

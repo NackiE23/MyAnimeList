@@ -110,7 +110,7 @@
 
         $('#remove_category option:not(:first-child)').each(function() {
             $('#anime_categories').val($('#anime_categories').val() + " " + this.value);
-            $('#anime_id_categories').val($('#anime_id_categories').val() + " " + $(this).prop('data-category-id'));
+            $('#anime_id_categories').val($('#anime_id_categories').val() + " " + $(this).attr('data-category-id'));
         });
 
         normalizeSelects();
