@@ -17,9 +17,18 @@ def compare_category_with_ids(anime_categories: list, categories_ids: list) -> b
 
 @app.route('/', methods=['GET', 'POST'])
 def index_page():
-    animes = Anime.query.all()
     list_categories = ListCategory.query.all()
 
+    if request.args.get('sort'):
+        if request.args.get('sort') == "grade_down":
+            animes = Anime.query.order_by(Anime.grade.desc()).all()
+        elif request.args.get('sort') == "grade_up":
+            animes = Anime.query.order_by(Anime.grade.asc()).all()
+        else:
+            animes = Anime.query.all()
+    else:
+        animes = Anime.query.all()
+    
     if request.method == "POST":
         list_category_ids = request.form.get('str_list_category_ids', '').split()
         user_id = current_user.id
