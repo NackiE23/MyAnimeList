@@ -32,8 +32,68 @@
     </div>
 </div>
 
+<nav aria-label="Page navigation" class="mt-2 pagination-dark">
+    <ul class="pagination pagination-dark justify-content-center">
+        {% if animes.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index_page') }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index_page', page=animes.prev_num) }}" aria-label="Previous">
+                    <span aria-hidden="true">&lsaquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&lsaquo;</span>
+            </li>
+        {% endif %}
+        {%- for page in animes.iter_pages() %}
+            {% if page %}
+                {% if page != animes.page %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('index_page', page=page) }}">
+                            {{ page }}
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ page }}</span>
+                    </li>
+                {% endif %}
+            {% else %}
+                <span class=ellipsis>…</span>
+            {% endif %}
+        {%- endfor %}
+        {% if animes.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index_page', page=animes.next_num) }}" aria-label="Next">
+                    <span aria-hidden="true">&rsaquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index_page', page=animes.pages) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&rsaquo;</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&raquo;</span>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
 
-{% for anime in animes %}
+
+{% for anime in animes.items %}
 <div class="container">
     <div class="anime">
         <div class="row">
@@ -77,6 +137,69 @@
     </div>
 </div>
 {% endfor %}
+
+
+<nav aria-label="Page navigation" class="mt-2 pagination-dark">
+    <ul class="pagination pagination-dark justify-content-center">
+        {% if animes.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index_page') }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index_page', page=animes.prev_num) }}" aria-label="Previous">
+                    <span aria-hidden="true">&lsaquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&lsaquo;</span>
+            </li>
+        {% endif %}
+        {%- for page in animes.iter_pages() %}
+            {% if page %}
+                {% if page != animes.page %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('index_page', page=page) }}">
+                            {{ page }}
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ page }}</span>
+                    </li>
+                {% endif %}
+            {% else %}
+                <span class=ellipsis>…</span>
+            {% endif %}
+        {%- endfor %}
+        {% if animes.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index_page', page=animes.next_num) }}" aria-label="Next">
+                    <span aria-hidden="true">&rsaquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index_page', page=animes.pages) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&rsaquo;</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&raquo;</span>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+
+
 {% endblock %}
 
 {% block script %}

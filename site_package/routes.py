@@ -15,19 +15,22 @@ def compare_category_with_ids(anime_categories: list, categories_ids: list) -> b
     return len(anime_categories) != len(set([cat.id for cat in anime_categories] + categories_ids))
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index_page():
+@app.route('/', methods=['GET', 'POST'], defaults={"page": 1}) 
+@app.route('/<int:page>', methods=['GET', 'POST'])
+def index_page(page):
+    page = page
+    per_page = 25
     list_categories = ListCategory.query.all()
 
     if request.args.get('sort'):
         if request.args.get('sort') == "grade_down":
-            animes = Anime.query.order_by(Anime.grade.desc()).all()
+            animes = Anime.query.order_by(Anime.grade.desc()).paginate(page=page, per_page=per_page, error_out=False)
         elif request.args.get('sort') == "grade_up":
-            animes = Anime.query.order_by(Anime.grade.asc()).all()
+            animes = Anime.query.order_by(Anime.grade.asc()).paginate(page=page, per_page=per_page, error_out=False)
         else:
-            animes = Anime.query.all()
+            animes = Anime.query.paginate(page=page, per_page=per_page, error_out=False)
     else:
-        animes = Anime.query.all()
+        animes = Anime.query.paginate(page=page, per_page=per_page, error_out=False)
     
     if request.method == "POST":
         list_category_ids = request.form.get('str_list_category_ids', '').split()

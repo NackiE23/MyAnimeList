@@ -8,6 +8,17 @@ body {
     color: white;
 }
 
+.page-item .page-link {
+    background: #495057;
+    color: #ced4da;
+}
+.page-item.active .page-link,
+.page-item:hover .page-link {
+    color: #fff !important;
+    background: #212529 !important;
+    border-color: #fff !important;
+}
+
 .anime {
     margin: 20px 0;
     padding: 10px;
@@ -17,4 +28,8 @@ body {
 }
 .anime:hover {
     box-shadow: 0 1px 10px white;
+}
+.anime img {
+    max-width: 255px;
+    max-height: 302px;
 }
