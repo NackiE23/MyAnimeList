@@ -1,4 +1,4 @@
-import os.path
+import os
 import uuid
 
 from flask import render_template, redirect, url_for, flash, request
@@ -89,8 +89,13 @@ def add_anime_page():
             anime.grade = grade
         if img := form.img.data:
             filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
-            img.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], filename))
-            anime.img = os.path.join(app.config['UPLOAD_FOLDER'][1:], filename)
+            folder_release = '/'.join(anime.release.strftime('%Y-%m').split('-'))
+
+            if not os.path.exists(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release)):
+                os.makedirs(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release))
+
+            img.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release, filename))
+            anime.img = os.path.join(app.config['UPLOAD_FOLDER'][1:], folder_release, filename)
         if categories := request.form.get('id_categories', '').split():
             for category_id in categories:
                 anime.categories.append(AnimeCategory.query.get(category_id))
