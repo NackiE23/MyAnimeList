@@ -133,8 +133,13 @@ def change_anime_page(anime_id):
             anime.grade = form.grade.data
         if img := form.img.data:
             filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
-            img.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], filename))
-            anime.img = os.path.join(app.config['UPLOAD_FOLDER'][1:], filename)
+            folder_release = '/'.join(anime.release.strftime('%Y-%m').split('-'))
+
+            if not os.path.exists(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release)):
+                os.makedirs(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release))
+
+            img.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release, filename))
+            anime.img = os.path.join(app.config['UPLOAD_FOLDER'][1:], folder_release, filename)
 
         categories = request.form.get('id_categories', '').split()
         if compare_category_with_ids(anime.categories, categories):
