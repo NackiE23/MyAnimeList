@@ -1,14 +1,16 @@
 import os
 import uuid
+import datetime
+
+import requests
 
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
 
-from site_package import app, db
+from site_package import app, db, parsing
 from site_package.forms import RegisterForm, LoginForm, AnimeModelForm
 from site_package.models import Anime, User, AnimeCategory, ListCategory, UserAnimeList
-from site_package.parsing import parse_season_page
 
 
 def compare_category_with_ids(anime_categories: list, categories_ids: list) -> bool:
@@ -53,7 +55,7 @@ def index_page(page):
 
 @app.route('/seasonal/')
 def seasonal_page():
-    animes = parse_season_page()
+    animes = parsing.parse_season_page()
     length = len(animes['name'])
 
     return render_template('seasonal_animes.html', title="Seasonal Animes", length=length, animes=animes)
@@ -89,7 +91,7 @@ def add_anime_page():
             anime.grade = grade
         if img := form.img.data:
             filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
-            folder_release = '/'.join(anime.release.strftime('%Y-%m').split('-'))
+            folder_release = anime.release.strftime('%Y/%m')
 
             if not os.path.exists(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release)):
                 os.makedirs(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release))
@@ -110,6 +112,59 @@ def add_anime_page():
             flash(f"Error: {error}", category="danger")
 
     return render_template('add_anime.html', title='Add anime', form=form, categories=AnimeCategory.query.all())
+
+
+@app.route('/import_anime/', methods=['GET', 'POST'])
+def import_anime():
+    if request.method == "POST":
+        anime_url = request.form['url']
+        data = parsing.parse_mal_anime_page(anime_url)
+
+        release = datetime.datetime.strptime(data['release'], '%b %d %Y').date()
+        grade = request.form['grade']
+
+        # Main info
+        anime = Anime(
+            name=data['name'],
+            alternative_name=data['alternative_name'],
+            release=release,
+            grade=grade,
+            description=data['description']
+        )
+        
+        # Add categories
+        for category_name in data['categories']:
+            if category:= AnimeCategory.query.filter_by(name=category_name).first():
+                pass
+            else:
+                category = AnimeCategory(name=category_name)
+                db.session.add(category)
+                db.session.commit()
+
+            anime.categories.append(category)
+
+        # Image upload
+        img_data = requests.get(data['img_url']).content
+        filename = str(uuid.uuid1()) + '_' + secure_filename(data['img_url'].split('/')[-1])
+        folder_release = release.strftime('%Y/%m')
+        img_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release)
+        img_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release, filename)
+
+        if not os.path.exists(img_folder):
+            os.makedirs(img_folder)
+
+        with open(img_path, 'wb') as handler:
+            handler.write(img_data)
+
+        anime.img = os.path.join(app.config['UPLOAD_FOLDER'][1:], folder_release, filename)
+        
+        # Anime commit
+        db.session.add(anime)
+        db.session.commit()
+
+        flash(f"Anime {anime.name} has been imported!", category="success")
+
+    return render_template('import_anime.html', title='Import Anime from MAL')
 
 
 @app.route('/change_anime/<int:anime_id>/', methods=['GET', 'POST'])
@@ -133,7 +188,7 @@ def change_anime_page(anime_id):
             anime.grade = form.grade.data
         if img := form.img.data:
             filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
-            folder_release = '/'.join(anime.release.strftime('%Y-%m').split('-'))
+            folder_release = anime.release.strftime('%Y/%m')
 
             if not os.path.exists(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release)):
                 os.makedirs(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release))

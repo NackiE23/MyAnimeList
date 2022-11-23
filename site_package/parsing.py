@@ -1,4 +1,5 @@
 import requests
+import re
 from bs4 import BeautifulSoup
 
 
@@ -20,6 +21,33 @@ def parse_season_page():
         'categories': categories,
         'img_path': img_paths,
         'link': links,
+    }
+
+    return result
+
+
+def parse_mal_anime_page(url):
+    text = requests.get(url).text
+    soup = BeautifulSoup(text, 'lxml')
+
+    name = soup.find('p', class_='title-english').text
+    alternative_name = soup.find('h1', class_='title-name').text
+    # release = soup.find('span', string='Aired:').parent.text.strip()[9:-5]
+    release = soup.find('span', string='Aired:').parent.text
+    release = re.search(r'[A-Z][a-z]{2} \d{1,2}, \d{4}', release).group().replace(',', '')
+    
+
+    description = soup.find('p', itemprop='description').text
+    categories = [cat.text.strip() for cat in soup.find_all('span', itemprop='genre')]
+    img_url = soup.select_one('.leftside > div:nth-child(1) > a:nth-child(1) > img:nth-child(1)').get('data-src', '#')
+
+    result = {
+        'name': name,
+        'alternative_name': alternative_name,
+        'release': release,
+        'description': description,
+        'categories': categories,
+        'img_url': img_url,
     }
 
     return result
