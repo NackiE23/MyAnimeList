@@ -7,7 +7,7 @@
 <a class="text-white" href="?sort=grade_down">Sort by grade desc</a>
 <a class="text-white" href="?sort=grade_up">Sort by grade asc</a>
 
-
+{#
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-secondary">
@@ -31,6 +31,7 @@
         </div>
     </div>
 </div>
+#}
 
 <nav aria-label="Page navigation" class="mt-2 pagination-dark">
     <ul class="pagination pagination-dark justify-content-center">
@@ -92,7 +93,9 @@
     </ul>
 </nav>
 
-
+{% if not animes.items %}
+<h1>No anime yet!</h1>
+{% endif %}
 {% for anime in animes.items %}
 <div class="container">
     <div class="anime">

@@ -6,6 +6,7 @@ import requests
 
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user
+from sqlalchemy import or_
 from werkzeug.utils import secure_filename
 
 from site_package import app, db, parsing
@@ -50,7 +51,7 @@ def index_page(page):
         flash(f"Something went wrong", category="danger")
         return redirect(request.url)
 
-    return render_template('anime_list.html', title="Index page", animes=animes, list_categories=list_categories)
+    return render_template('anime_list.html', title="Index page", animes=animes)
 
 
 @app.route('/seasonal/')
@@ -213,6 +214,20 @@ def change_anime_page(anime_id):
             flash(f"Error: {error}", category="danger")
 
     return render_template('change_anime.html', title="Change anime", form=form, anime=anime, categories=available_categories)
+
+
+@app.route('/search/anime', methods=['GET'], defaults={"page": 1})
+def search_anime(page):
+    animes = []
+
+    page = page
+    per_page = 25
+    
+    animes = Anime.query.filter(or_(Anime.name.like('%' + request.args.get('name') + '%'), 
+                                    Anime.alternative_name.like('%' + request.args.get('name') + '%')))
+    animes = animes.paginate(page=page, per_page=per_page, error_out=False)
+
+    return render_template('anime_list.html', title="Search page", animes=animes)
 
 
 @app.route('/register/', methods=['GET', 'POST'])
