@@ -15,6 +15,7 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(length=60), nullable=False)
     email = db.Column(db.String(length=100), nullable=False, unique=True)
     password_hash = db.Column(db.String(length=60), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
     anime_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('user', lazy=True))
 
     def __repr__(self):
