@@ -145,20 +145,23 @@ def import_anime():
             anime.categories.append(category)
 
         # Image upload
-        img_data = requests.get(data['img_url']).content
-        filename = str(uuid.uuid1()) + '_' + secure_filename(data['img_url'].split('/')[-1])
-        folder_release = release.strftime('%Y/%m')
-        img_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release)
-        img_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release, filename)
+        try:
+            img_data = requests.get(data['img_url'], verify=False, timeout=5).content
+            filename = str(uuid.uuid1()) + '_' + secure_filename(data['img_url'].split('/')[-1])
+            folder_release = release.strftime('%Y/%m')
+            img_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release)
+            img_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], folder_release, filename)
 
-        if not os.path.exists(img_folder):
-            os.makedirs(img_folder)
+            if not os.path.exists(img_folder):
+                os.makedirs(img_folder)
 
-        with open(img_path, 'wb') as handler:
-            handler.write(img_data)
+            with open(img_path, 'wb') as handler:
+                handler.write(img_data)
 
-        anime.img = os.path.join(app.config['UPLOAD_FOLDER'][1:], folder_release, filename)
-        
+            anime.img = os.path.join(app.config['UPLOAD_FOLDER'][1:], folder_release, filename)
+        except requests.exceptions.ConnectionError:
+            flash('Image not available', category='danger')
+
         # Anime commit
         db.session.add(anime)
         db.session.commit()

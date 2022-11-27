@@ -30,13 +30,32 @@ def parse_mal_anime_page(url):
     text = requests.get(url).text
     soup = BeautifulSoup(text, 'lxml')
 
-    name = soup.find('p', class_='title-english').text
-    alternative_name = soup.find('h1', class_='title-name').text
-    # release = soup.find('span', string='Aired:').parent.text.strip()[9:-5]
-    release = soup.find('span', string='Aired:').parent.text
-    release = re.search(r'[A-Z][a-z]{2} \d{1,2}, \d{4}', release).group().replace(',', '')
+    # Name/Alternative Name
+    name = soup.find('p', class_='title-english')
+    alternative_name = soup.find('h1', class_='title-name')
     
+    if name and alternative_name:
+        name = name.text
+        alternative_name = alternative_name.text
+    elif alternative_name and not name:
+        name = alternative_name.text
+        alternative_name = ""
+    elif name and not alternative_name:
+        name = name.text
+        alternative_name = ""
+    
+    # Release
+    release = soup.find('span', string='Aired:')
 
+    if not release:
+        release = soup.find('span', string='Published:')
+    if release:
+        release = release.parent.text
+        release = re.search(r'[A-Z][a-z]{2} \d{1,2}, \d{4}', release).group().replace(',', '')
+    else:
+        release = 'Jan 01 2000'
+
+    # Description/Categories/Img Url
     description = soup.find('p', itemprop='description').text
     categories = [cat.text.strip() for cat in soup.find_all('span', itemprop='genre')]
     img_url = soup.select_one('.leftside > div:nth-child(1) > a:nth-child(1) > img:nth-child(1)').get('data-src', '#')
