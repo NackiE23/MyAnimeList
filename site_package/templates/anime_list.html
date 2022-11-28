@@ -105,9 +105,11 @@
                 <span class="badge bg-secondary">
                     [{{ anime.grade }}/100]
                 </span>
-                <form action="/delete_anime/{{anime.id}}" method="POST">
+                {% if current_user.is_admin %}
+                <form action="{{ url_for('delete_anime', anime_id=anime.id) }}" method="POST">
                     <input class="btn btn-danger m-2" type="submit" value="Delete">
                 </form>
+                {% endif %}
             </h2>
         </div>
         <div class="row">
