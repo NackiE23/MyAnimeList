@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename
 
 from site_package import app, db, parsing
 from site_package.forms import RegisterForm, LoginForm, AnimeModelForm
-from site_package.models import Anime, User, AnimeCategory, ListCategory, UserAnimeList
+from site_package.models import Anime, User, AnimeCategory, ListCategory, UserAnimeList, anime_categories
 
 
 def compare_category_with_ids(anime_categories: list, categories_ids: list) -> bool:
@@ -217,6 +217,17 @@ def change_anime_page(anime_id):
             flash(f"Error: {error}", category="danger")
 
     return render_template('change_anime.html', title="Change anime", form=form, anime=anime, categories=available_categories)
+
+
+@app.route('/delete_anime/<int:anime_id>', methods=['POST'])
+def delete_anime(anime_id):
+    anime = Anime.query.get(anime_id)
+    anime_name = anime.name
+    db.session.delete(anime)
+    db.session.commit()
+
+    flash(f"{anime_name} has been deleted!", category='success')
+    return redirect(url_for('index_page'))
 
 
 @app.route('/search/anime', methods=['GET'], defaults={"page": 1})

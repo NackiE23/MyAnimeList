@@ -100,7 +100,18 @@
 <div class="container">
     <div class="anime">
         <div class="row">
-            <h2>{{ anime.name }} <span class="badge bg-secondary">[{{ anime.grade }}/100]</span></h2>
+            <h2>
+                {{ anime.name }} 
+                <span class="badge bg-secondary">
+                    [{{ anime.grade }}/100]
+                </span>
+                <form action="/delete_anime/{{anime.id}}" method="POST">
+                    <input class="btn btn-danger m-2" type="submit" value="Delete">
+                </form>
+            </h2>
+        </div>
+        <div class="row">
+            
         </div>
         <div class="row text-center p-1">
             <ul class="list-group list-group-horizontal justify-content-center" style="overflow-y: scroll;">
@@ -123,6 +134,7 @@
                 <p>Decription:<br>
                     {{ anime.description }}
                 </p>
+                {#
                 {% if current_user.is_authenticated %}
                     <p>
                         <button class="btn btn-secondary openModal" data-bs-toggle="modal" data-bs-target="#exampleModal" data-anime-id="{{ anime.id }}" data-anime-name="{{ anime.name }}">
@@ -130,6 +142,7 @@
                         </button>
                     </p>
                 {% endif %}
+                #}
                 <p>
                     <a class="btn btn-secondary" href="{{ url_for('change_anime_page', anime_id=anime.id) }}">
                         Change Informartion
