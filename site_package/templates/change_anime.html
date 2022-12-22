@@ -33,7 +33,7 @@
         {{ form.release.label(class="form-label") }}
             {{ form.release(value=anime.release, class="form-control bg-secondary") }}
         {{ form.description.label(class="form-label") }}
-            <textarea name="description" class="form-control bg-secondary">{{ anime.description }}</textarea>
+            <textarea name="description" class="form-control bg-secondary" rows=6>{{ anime.description }}</textarea>
         {{ form.grade.label(class="form-label") }}
             {% if anime.grade %}
                 {{ form.grade(min=0, max=100, value=anime.grade, class="form-control bg-secondary") }}
