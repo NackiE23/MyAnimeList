@@ -100,17 +100,22 @@
 {% endif %}
 {% for anime in animes.items %}
 <div class="container">
-    <div class="anime">
+    <div class="anime" id="anime_{{anime.id}}">
         <div class="row">
             <h2>
+                <a href="#anime_{{anime.id}}">.</a>
                 {{ anime.name }} 
-                <span class="badge bg-secondary">
-                    [{{ anime.grade }}/100]
-                </span>
                 {% if current_user.is_admin %}
-                <form action="{{ url_for('delete_anime', anime_id=anime.id) }}" method="POST">
-                    <input class="btn btn-danger m-2" type="submit" value="Delete">
-                </form>
+                    <span class="badge bg-secondary">
+                        [<input type="number" class="grade_anime" data-anime-id="{{anime.id}}" value="{{ anime.grade }}" length="3" max="100" min="0">/100]
+                    </span>
+                    <form action="{{ url_for('delete_anime', anime_id=anime.id) }}" method="POST">
+                        <input class="btn btn-danger m-2" type="submit" value="Delete">
+                    </form>
+                {% else %}
+                    <span class="badge bg-secondary">
+                        [{{ anime.grade }}/100]
+                    </span>
                 {% endif %}
             </h2>
         </div>
@@ -226,6 +231,24 @@
 
 {% block script %}
 <script>
+    $('.grade_anime').change(function() {
+        $.ajax({
+            url: "/change_anime_grade",
+            type: 'post',
+            contentType: 'application/x-www-form-urlencoded',
+            data: {
+                anime_id: $(this).data('anime-id'),
+                grade: $(this).val()
+            },
+            success: function(responce) {
+                console.log('Changes has been commited!');
+            },
+            error: function(responce) {
+                console.log('Changes has not been commited!');
+            }
+        });
+    });
+
     $('.openModal').click(function() {
         animeName = $(this).attr('data-anime-name');
         animeId = $(this).attr('data-anime-id');
