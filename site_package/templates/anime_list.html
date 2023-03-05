@@ -147,11 +147,13 @@
                     </p>
                 {% endif %}
                 #}
+                {% if current_user.is_admin %}
                 <p>
                     <a class="btn btn-secondary" href="{{ url_for('change_anime_page', anime_id=anime.id) }}">
-                        Change Informartion
+                        Change Information
                     </a>
                 </p>
+                {% endif %}
             </div>
         </div>
     </div>
