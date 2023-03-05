@@ -20,22 +20,20 @@ def compare_category_with_ids(anime_categories: list, categories_ids: list) -> b
 
 @app.route('/', methods=['GET', 'POST'], defaults={"page": 1}) 
 @app.route('/<int:page>', methods=['GET', 'POST'])
-def index_page(page):
+def anime_list(page):
+    # Main variables
     page = page
     per_page = 25
     list_categories = ListCategory.query.all()
 
-    sort_info = request.args.get('sort')
-
-    if sort_info:
-        if sort_info == "grade_down":
-            animes = Anime.query.order_by(Anime.grade.desc()).paginate(page=page, per_page=per_page, error_out=False)
-        elif sort_info == "grade_up":
-            animes = Anime.query.order_by(Anime.grade.asc()).paginate(page=page, per_page=per_page, error_out=False)
-        else:
-            animes = Anime.query.paginate(page=page, per_page=per_page, error_out=False)
+    # Get and paginate anime
+    animes = Anime.query.filter(or_(Anime.name.like('%' + request.args.get('name', '') + '%'), 
+                                    Anime.alternative_name.like('%' + request.args.get('name', '') + '%')))
+    if request.args.get('sort', '') == "grade_up":
+        animes = animes.order_by(Anime.grade.asc())
     else:
-        animes = Anime.query.paginate(page=page, per_page=per_page, error_out=False)
+        animes = animes.order_by(Anime.grade.desc())
+    animes = animes.paginate(page=page, per_page=per_page, error_out=False)
     
     if request.method == "POST":
         list_category_ids = request.form.get('str_list_category_ids', '').split()
@@ -53,7 +51,13 @@ def index_page(page):
         flash(f"Something went wrong", category="danger")
         return redirect(request.url)
 
-    return render_template('anime_list.html', title="Index page", animes=animes, sort_info=sort_info)
+    context = {
+        'title': "Index page",
+        'animes': animes,
+        'request_args': request.args
+    }
+
+    return render_template('anime_list.html', **context)
 
 
 @app.route('/seasonal/')
@@ -212,7 +216,7 @@ def change_anime_page(anime_id):
         db.session.commit()
 
         flash(f"Changes have been saved", category="success")
-        return redirect(url_for('index_page'))
+        return redirect(url_for('anime_list'))
 
     if form.errors:
         for error in form.errors.values():
@@ -229,21 +233,7 @@ def delete_anime(anime_id):
     db.session.commit()
 
     flash(f"{anime_name} has been deleted!", category='success')
-    return redirect(url_for('index_page'))
-
-
-@app.route('/search/anime', methods=['GET'], defaults={"page": 1})
-def search_anime(page):
-    animes = []
-
-    page = page
-    per_page = 25
-    
-    animes = Anime.query.filter(or_(Anime.name.like('%' + request.args.get('name') + '%'), 
-                                    Anime.alternative_name.like('%' + request.args.get('name') + '%')))
-    animes = animes.paginate(page=page, per_page=per_page, error_out=False)
-
-    return render_template('anime_list.html', title="Search page", animes=animes)
+    return redirect(url_for('anime_list'))
 
 
 @app.route('/register/', methods=['GET', 'POST'])
@@ -260,7 +250,7 @@ def register_page():
         login_user(user_to_create)
         flash(f"You have successfully logged in as {user_to_create.name}", category="success")
 
-        return redirect(url_for('index_page'))
+        return redirect(url_for('anime_list'))
 
     if form.errors:
         for error in form.errors.values():
@@ -281,7 +271,7 @@ def login_page():
                     login_user(user)
                     flash(f"You have successfully logged in as {user.name}", category="success")
 
-                    return redirect(url_for('index_page'))
+                    return redirect(url_for('anime_list'))
                 if not user:
                     flash(f"User with that email does not exist!")
 
@@ -300,4 +290,4 @@ def logout_page():
     logout_user()
     flash("You have successfully loged out", category="success")
 
-    return redirect(url_for('index_page'))
+    return redirect(url_for('anime_list'))

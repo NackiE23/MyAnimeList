@@ -16,14 +16,14 @@
       {% block content -%}
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-light">
          <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('index_page') }}">OAL</a>
+            <a class="navbar-brand" href="{{ url_for('anime_list') }}">OAL</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup" style="margin-right: 20px;">
                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                     <a class="nav-link" href="{{ url_for('index_page') }}">Index</a>
+                     <a class="nav-link" href="{{ url_for('anime_list') }}">Index</a>
                   </li>
                   <li class="nav-item">
                      <a class="nav-link" href="{{ url_for('seasonal_page') }}">Seasonal</a>
@@ -41,8 +41,8 @@
             </div>
             <div class="d-flex align-items-center">
                <div class="md-form me-2">
-                  <form action="/search/anime" method="GET">
-                     <input class="form-control bg-dark text-white border-bottom" type="text" name="name" placeholder="Search Anime" aria-label="Search Anime">
+                  <form action="{{ url_for('anime_list') }}" method="GET">
+                     <input class="form-control bg-dark text-white border-bottom" type="text" name="name" placeholder="Search Anime" aria-label="Search Anime" {% if request_args.name %}value='{{request_args.name}}'{% endif %}>
                   </form>
                </div>
                <ul class="navbar-nav me-auto mb-2 mb-lg-0">

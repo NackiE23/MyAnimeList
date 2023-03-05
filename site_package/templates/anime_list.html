@@ -4,10 +4,10 @@
 {{ super() }}
 <h1>Own Anime List</h1>
 
-| 
-<a class="text-white" href="{{ animes.page }}">Without sort</a> | 
-<a class="text-white" href="?sort=grade_down">Sort by grade desc</a> | 
-<a class="text-white" href="?sort=grade_up">Sort by grade asc</a> |
+|
+<a class="text-white" href="{{ url_for('anime_list') }}">Clear get requests</a> | 
+<a class="text-white" href="?{% if request_args.name %}name={{request_args.name}}&{% endif %}sort=grade_down">Sort by grade desc</a> | 
+<a class="text-white" href="?{% if request_args.name %}name={{request_args.name}}&{% endif %}sort=grade_up">Sort by grade asc</a> |
 
 {#
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -39,12 +39,12 @@
     <ul class="pagination pagination-dark justify-content-center">
         {% if animes.has_prev %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('index_page', sort=sort_info) }}" aria-label="Previous">
+                <a class="page-link" href="{{ url_for('anime_list', **request_args) }}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('index_page', page=animes.prev_num, sort=sort_info) }}" aria-label="Previous">
+                <a class="page-link" href="{{ url_for('anime_list', page=animes.prev_num, **request_args) }}" aria-label="Previous">
                     <span aria-hidden="true">&lsaquo;</span>
                 </a>
             </li>
@@ -60,7 +60,7 @@
             {% if page %}
                 {% if page != animes.page %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('index_page', page=page, sort=sort_info) }}">
+                        <a class="page-link" href="{{ url_for('anime_list', page=page, **request_args) }}">
                             {{ page }}
                         </a>
                     </li>
@@ -75,12 +75,12 @@
         {%- endfor %}
         {% if animes.has_next %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('index_page', page=animes.next_num, sort=sort_info) }}" aria-label="Next">
+                <a class="page-link" href="{{ url_for('anime_list', page=animes.next_num, **request_args) }}" aria-label="Next">
                     <span aria-hidden="true">&rsaquo;</span>
                 </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('index_page', page=animes.pages, sort=sort_info) }}" aria-label="Next">
+                <a class="page-link" href="{{ url_for('anime_list', page=animes.pages, **request_args) }}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
@@ -163,12 +163,12 @@
     <ul class="pagination pagination-dark justify-content-center">
         {% if animes.has_prev %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('index_page', sort=sort_info) }}" aria-label="Previous">
+                <a class="page-link" href="{{ url_for('anime_list', **request_args) }}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('index_page', page=animes.prev_num, sort=sort_info) }}" aria-label="Previous">
+                <a class="page-link" href="{{ url_for('anime_list', page=animes.prev_num, **request_args) }}" aria-label="Previous">
                     <span aria-hidden="true">&lsaquo;</span>
                 </a>
             </li>
@@ -184,7 +184,7 @@
             {% if page %}
                 {% if page != animes.page %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('index_page', page=page, sort=sort_info) }}">
+                        <a class="page-link" href="{{ url_for('anime_list', page=page, **request_args) }}">
                             {{ page }}
                         </a>
                     </li>
@@ -199,12 +199,12 @@
         {%- endfor %}
         {% if animes.has_next %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('index_page', page=animes.next_num, sort=sort_info) }}" aria-label="Next">
+                <a class="page-link" href="{{ url_for('anime_list', page=animes.next_num, **request_args) }}" aria-label="Next">
                     <span aria-hidden="true">&rsaquo;</span>
                 </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="{{ url_for('index_page', page=animes.pages, sort=sort_info) }}" aria-label="Next">
+                <a class="page-link" href="{{ url_for('anime_list', page=animes.pages, **request_args) }}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
