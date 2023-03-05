@@ -4,7 +4,7 @@ import datetime
 
 import requests
 
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, Markup
 from flask_login import login_user, logout_user, current_user
 from sqlalchemy import or_
 from werkzeug.utils import secure_filename
@@ -112,7 +112,7 @@ def add_anime_page():
         db.session.add(anime)
         db.session.commit()
 
-        flash(f"Anime {anime.name} added!", category="success")
+        flash(Markup(f"Anime {anime.name} has been added! <a href='{ url_for('change_anime_page', anime_id=anime.id) }'>Link here</a>"), category="success")
 
     if form.errors:
         for error in form.errors.values():
@@ -172,13 +172,13 @@ def import_anime():
         db.session.add(anime)
         db.session.commit()
 
-        flash(f"Anime {anime.name} has been imported!", category="success")
+        flash(Markup(f"Anime {anime.name} has been imported! <a href='{ url_for('change_anime_page', anime_id=anime.id) }'>Link here</a>"), category="success")
 
     return render_template('import_anime.html', title='Import Anime from MAL')
 
 
 @app.route('/change_anime/<int:anime_id>/', methods=['GET', 'POST'])
-def change_anime_page(anime_id):
+def change_anime_page(anime_id):    
     anime = Anime.query.get_or_404(anime_id)
     available_categories = [c for c in AnimeCategory.query.all() if c not in anime.categories]
 

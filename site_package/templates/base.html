@@ -42,7 +42,7 @@
             <div class="d-flex align-items-center">
                <div class="md-form me-2">
                   <form action="{{ url_for('anime_list') }}" method="GET">
-                     <input class="form-control bg-dark text-white border-bottom" type="text" name="name" placeholder="Search Anime" aria-label="Search Anime" {% if request_args.name %}value='{{request_args.name}}'{% endif %}>
+                     <input class="form-control bg-dark text-white border-bottom" type="text" name="name" placeholder="Search Anime" aria-label="Search Anime">
                   </form>
                </div>
                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
