@@ -25,10 +25,12 @@ def index_page(page):
     per_page = 25
     list_categories = ListCategory.query.all()
 
-    if request.args.get('sort'):
-        if request.args.get('sort') == "grade_down":
+    sort_info = request.args.get('sort')
+
+    if sort_info:
+        if sort_info == "grade_down":
             animes = Anime.query.order_by(Anime.grade.desc()).paginate(page=page, per_page=per_page, error_out=False)
-        elif request.args.get('sort') == "grade_up":
+        elif sort_info == "grade_up":
             animes = Anime.query.order_by(Anime.grade.asc()).paginate(page=page, per_page=per_page, error_out=False)
         else:
             animes = Anime.query.paginate(page=page, per_page=per_page, error_out=False)
@@ -51,7 +53,7 @@ def index_page(page):
         flash(f"Something went wrong", category="danger")
         return redirect(request.url)
 
-    return render_template('anime_list.html', title="Index page", animes=animes)
+    return render_template('anime_list.html', title="Index page", animes=animes, sort_info=sort_info)
 
 
 @app.route('/seasonal/')
