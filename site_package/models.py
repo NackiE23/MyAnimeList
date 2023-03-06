@@ -66,6 +66,9 @@ class Anime(db.Model):
     def normalize_release(self):
         return f"{number_to_month(self.release.month)} {self.release.day}, {self.release.year}"
 
+    def get_url(self):
+        return f"/#anime_{self.id}"
+
 
 class AnimeCategory(db.Model):
     __tablename__ = "category"
