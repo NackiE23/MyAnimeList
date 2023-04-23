@@ -154,7 +154,7 @@
                 #}
                 {% if current_user.is_admin %}
                 <p>
-                    <a class="btn btn-secondary" href="{{ url_for('change_anime_page', anime_id=anime.id) }}">
+                    <a class="btn btn-secondary" href="{{ url_for('change_anime_page', anime_id=anime.id, redirect_to=anime.get_url()) }}">
                         Change Information
                     </a>
                 </p>

@@ -234,7 +234,11 @@ def change_anime_page(anime_id):
         db.session.commit()
 
         flash(f"Changes have been saved", category="success")
-        return redirect(url_for('anime_list'))
+
+        if request.args.get('redirect_to', ''):
+            return redirect(request.args.get('redirect_to'))
+        else:
+            return redirect(url_for('anime_list'))
 
     if form.errors:
         for error in form.errors.values():
