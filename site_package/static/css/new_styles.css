@@ -1,0 +1,123 @@
+:root {
+    --main-bg: #101010;
+    --secondary-bg: #121116;
+    --white: #FFFEFB;
+    --smoke: rgba(255, 255, 255, .9);
+    --secondary: #634AFE;
+    --gray: #BCBBC0;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+body {
+    background-color: var(--main-bg);
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* NAVBAR */
+.menu {
+    background-color: var(--secondary-bg);
+    border-bottom: 2px solid var(--secondary);
+}
+
+.menu .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 0;
+}
+
+.menu__logo {
+    font-size: 42px;
+    font-weight: 500;
+}
+
+.menu__links_link {
+    margin: 0 20px 0 0;
+    color: var(--gray);
+    transition: all .5s;
+    position: relative;
+}
+
+.menu__links_link.active, .menu__links_link:hover {
+    color: var(--white);
+}
+
+.menu__links_link.active::before {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background-color: var(--secondary);
+}
+
+.menu__links_link:last-child {
+    margin: 0;
+}  
+
+.menu__input_form {
+    color: var(--secondary);
+    display: flex;
+    padding: 2px;
+    background: var(--smoke);
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+}
+  
+.menu__input_form input {
+    border: none;
+    background: transparent;
+    margin: 0;
+    padding: 7px 8px;
+    font-size: 17px;
+    color: inherit;
+    border: 1px solid transparent;
+    border-radius: inherit;
+}
+  
+.menu__input_form button {
+    text-indent: -999px;
+    overflow: hidden;
+    width: 40px;
+    padding: 0;
+    margin: 0;
+    border: 1px solid transparent;
+    border-radius: inherit;
+    cursor: pointer;
+}
+
+.menu__extra_links {
+    display: inherit;
+}
+
+.menu__extra_links_link {
+    cursor: pointer;
+    margin: 0 0 0 15px;
+    background-color: var(--smoke);
+    padding: 5px 5px 0px 5px;
+    border-radius: 5px;
+}
+
+.menu__extra_links_link:first-child {
+    margin: 0;
+}
+
+

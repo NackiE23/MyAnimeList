@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/new_styles.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    {% block title -%}<title>OAL | {{ title }}</title>{% endblock %}
+    {% block style -%}{% endblock %}
+</head>
+<body>
+
+
+{% block content -%}
+<nav class="menu">
+    <div class="container">
+        <div class="menu__logo">
+            OAL
+        </div>
+    
+        <div class="menu__links">
+            <a href="#" class="menu__links_link active">Home</a>
+            <a href="#" class="menu__links_link">Top anime</a>
+            <a href="#" class="menu__links_link">Add anime</a>
+            <a href="#" class="menu__links_link">Import anime from MAL</a>
+        </div>
+    
+        <div class="menu__input">
+            <form class="menu__input_form">
+                <input type="search" placeholder="Search..." name="search">
+                <button type="submit" style="background: transparent url('{{ url_for('static', filename='images/base/loupe.png')}}') no-repeat center"></button>                
+            </form>
+        </div>
+    
+        <div class="menu__extra_links">
+            <div class="menu__extra_links_link">
+                <img src="{{ url_for('static', filename='images/base/bell.png')}}" alt="#">
+            </div>
+            <div class="menu__extra_links_link">
+                <img src="{{ url_for('static', filename='images/base/account.png')}}" alt="#">
+            </div>
+        </div>
+    </div>
+</nav>  
+{% endblock -%}
+
+
+{% block footer -%}{% endblock -%}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+{% block script %}{% endblock %}
+</body>
+</html>
