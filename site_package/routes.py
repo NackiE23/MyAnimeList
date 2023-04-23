@@ -18,6 +18,15 @@ def compare_category_with_ids(anime_categories: list, categories_ids: list) -> b
     return len(anime_categories) != len(set([cat.id for cat in anime_categories] + categories_ids))
 
 
+@app.route('/new_home', methods=['GET', 'POST'])
+def new_home():
+    context = {
+        'title': "Index page"
+    }
+
+    return render_template('new_home.html', **context)
+
+
 @app.route('/change_anime_grade', methods=['POST'])
 def change_anime_grade():
     anime = Anime.query.get(request.form.get('anime_id'))
