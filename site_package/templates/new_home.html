@@ -54,7 +54,7 @@
         <div class="preview_genre_list__item presentation">
             <h1>{{ category.name }}</h1>
             <p>
-                {{ category.descritpion }}
+                {% if category.description %}{{ category.description }}{% endif %}
             </p>
             <a href="#" class="preview_genre_list__item_link button">See more</a>
 
