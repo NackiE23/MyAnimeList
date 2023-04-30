@@ -6,65 +6,83 @@
 <div class="container">
     <div class="preview_genre_list">
         <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="../static/uploads/102499b8-344c-11ed-8b35-c5219cfa3bdc_40409.jpg" alt="#">
+            <img class="preview_genre_list__item_image" src="{{ animes[0].img }}" alt="#">
             <p class="preview_genre_list__item_name">
-                Jojo's Bizare Adventure
+                {{ animes[0].name }}
             </p>
             <div class="preview_genre_list__item_grade">
-                [ 100/100 ]
+                [ {{ animes[0].grade }}/100 ]
             </div>
         </div>
         <div class="preview_genre_list__item">
-                <img class="preview_genre_list__item_image" src="../static/uploads/102499b8-344c-11ed-8b35-c5219cfa3bdc_40409.jpg" alt="#">
+                <img class="preview_genre_list__item_image" src="{{ animes[1].img }}" alt="#">
                 <p class="preview_genre_list__item_name">
-                    Jojo's Bizare Adventure sdf sdfgljkashdl jkhzxcl kvjasljkdfkhasjkdhasf
+                    {{ animes[1].name }}
                 </p>
                 <div class="preview_genre_list__item_grade">
-                    [ 87/100 ]
+                    [ {{ animes[1].grade }}/100 ]
                 </div>
         </div>
         <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="../static/uploads/102499b8-344c-11ed-8b35-c5219cfa3bdc_40409.jpg" alt="#">
+            <img class="preview_genre_list__item_image" src="{{ animes[2].img }}" alt="#">
+            <p class="preview_genre_list__item_name">
+                {{ animes[2].name }}
+            </p>
             <div class="preview_genre_list__item_grade">
-                [ 100/100 ]
+                [ {{ animes[2].grade }}/100 ]
             </div>
         </div>
         <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="../static/uploads/102499b8-344c-11ed-8b35-c5219cfa3bdc_40409.jpg" alt="#">
+            <img class="preview_genre_list__item_image" src="{{ animes[3].img }}" alt="#">
+            <p class="preview_genre_list__item_name">
+                {{ animes[3].name }}
+            </p>
             <div class="preview_genre_list__item_grade">
-                [ 100/100 ]
+                [ {{ animes[3].grade }}/100 ]
             </div>
         </div>
         <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="../static/uploads/102499b8-344c-11ed-8b35-c5219cfa3bdc_40409.jpg" alt="#">
+            <img class="preview_genre_list__item_image" src="{{ animes[4].img }}" alt="#">
+            <p class="preview_genre_list__item_name">
+                {{ animes[4].name }}
+            </p>
             <div class="preview_genre_list__item_grade">
-                [ 99/100 ]
+                [ {{ animes[4].grade }}/100 ]
             </div>
         </div>
         <div class="preview_genre_list__item presentation">
-            <h1>Action</h1>
+            <h1>{{ category.name }}</h1>
             <p>
-                This genre is good because his contains Gintama
+                {{ category.descritpion }}
             </p>
             <a href="#" class="preview_genre_list__item_link">See more</a>
 
         </div>
         <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="../static/uploads/102499b8-344c-11ed-8b35-c5219cfa3bdc_40409.jpg" alt="#">
+            <img class="preview_genre_list__item_image" src="{{ animes[5].img }}" alt="#">
+            <p class="preview_genre_list__item_name">
+                {{ animes[5].name }}
+            </p>
             <div class="preview_genre_list__item_grade">
-                [ 100/100 ]
+                [ {{ animes[5].grade }}/100 ]
             </div>
         </div>
         <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="../static/uploads/102499b8-344c-11ed-8b35-c5219cfa3bdc_40409.jpg" alt="#">
+            <img class="preview_genre_list__item_image" src="{{ animes[6].img }}" alt="#">
+            <p class="preview_genre_list__item_name">
+                {{ animes[6].name }}
+            </p>
             <div class="preview_genre_list__item_grade">
-                [ 100/100 ]
+                [ {{ animes[6].grade }}/100 ]
             </div>
         </div>
         <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="../static/uploads/102499b8-344c-11ed-8b35-c5219cfa3bdc_40409.jpg" alt="#">
+            <img class="preview_genre_list__item_image" src="{{ animes[7].img }}" alt="#">
+            <p class="preview_genre_list__item_name">
+                {{ animes[7].name }}
+            </p>
             <div class="preview_genre_list__item_grade">
-                [ 100/100 ]
+                [ {{ animes[7].grade }}/100 ]
             </div>
         </div>
     </div>

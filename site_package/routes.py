@@ -1,11 +1,13 @@
 import os
 import uuid
 import datetime
+import random
 
 import requests
 
 from flask import render_template, redirect, url_for, flash, request, Markup
 from flask_login import login_user, logout_user, current_user
+from sqlalchemy.sql.expression import func
 from sqlalchemy import or_
 from werkzeug.utils import secure_filename
 
@@ -20,8 +22,16 @@ def compare_category_with_ids(anime_categories: list, categories_ids: list) -> b
 
 @app.route('/new_home', methods=['GET', 'POST'])
 def new_home():
+    category = AnimeCategory.query.filter(AnimeCategory.animes.any()).order_by(func.random()).first()
+    animes = list(Anime.query.filter(Anime.categories.any(AnimeCategory.id==category.id)).order_by(func.random()).limit(8))
+
+    if len(animes) < 8:
+        animes = random.choices(animes, k=8)
+
     context = {
-        'title': "Index page"
+        'title': "Index page",
+        'category': category,
+        'animes': animes,
     }
 
     return render_template('new_home.html', **context)

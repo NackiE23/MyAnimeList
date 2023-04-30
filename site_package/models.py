@@ -75,6 +75,7 @@ class AnimeCategory(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(length=40), nullable=False, unique=True)
+    description = db.Column(db.String(length=2000), nullable=True)
 
     def __repr__(self):
         return self.name

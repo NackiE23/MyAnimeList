@@ -50,6 +50,10 @@ body {
     font-weight: 500;
 }
 
+.menu__links {
+    margin: 5px 20px;
+}
+
 .menu__links_link {
     margin: 0 20px 0 0;
     color: var(--gray);
