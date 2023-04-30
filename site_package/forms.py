@@ -19,6 +19,12 @@ class AnimeModelForm(FlaskForm):
     submit = SubmitField(label="Create an anime info")
 
 
+class CategoryForm(FlaskForm):
+    name = StringField(label="Name", validators=[DataRequired()])
+    description = TextAreaField(label="Description")
+    submit = SubmitField()
+
+
 class RegisterForm(FlaskForm):
     def validate_email(self, email_to_check):
         email = User.query.filter_by(email=email_to_check.data).first()

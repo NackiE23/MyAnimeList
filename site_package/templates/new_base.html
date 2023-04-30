@@ -25,6 +25,7 @@
             <a href="#" class="menu__links_link">Add anime</a>
             <a href="#" class="menu__links_link">Import anime from MAL</a>
             <a href="{{ url_for('anime_list') }}" class="menu__links_link">Old one</a>
+            <a href="#" class="menu__links_link">Import anime from MAL</a>
         </div>
     
         <div class="menu__input">
@@ -43,7 +44,15 @@
             </div>
         </div>
     </div>
-</nav>  
+</nav>
+
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
+    {{ msg }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+
 {% endblock -%}
 
 
