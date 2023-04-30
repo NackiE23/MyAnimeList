@@ -1,0 +1,20 @@
+{% extends "new_base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<div class="container text_align_center">
+    <h1>Categories:</h1>
+    {% for category in categories %}
+    <div class="categories_list">
+        {% if category %}
+        <div class="categories_list__item">
+            {{ category }} 
+            <a href="{{ url_for('new_category_change', cat_id=category.id) }}" class="secondary_color">Change</a>
+        </div>
+        {% endif %}
+    {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

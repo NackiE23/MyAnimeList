@@ -43,6 +43,16 @@ def new_home():
     return render_template('new_home.html', **context)
 
 
+@app.route('/new_categories_list', methods=['GET'])
+def new_categories_list():
+    context = {
+        'title': 'Categories list',
+        'categories': AnimeCategory.query.all(),
+    }
+
+    return render_template('new_categories_list.html', **context)
+
+
 @app.route('/new_category_change/<int:cat_id>', methods=['GET', 'POST'])
 def new_category_change(cat_id):
     category = AnimeCategory.query.get(cat_id)
