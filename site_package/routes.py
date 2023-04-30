@@ -23,10 +23,9 @@ def compare_category_with_ids(anime_categories: list, categories_ids: list) -> b
 @app.route('/new_home', methods=['GET', 'POST'])
 def new_home():
     categories = AnimeCategory.query.filter(AnimeCategory.animes.any()).order_by(func.random()).limit(5)
+    # categories + Adventure and some (100% chance)
     category_animes = []
     
-    flash("Test flash message", category="success")
-
     for category in categories:
         animes = list(Anime.query.filter(Anime.categories.any(AnimeCategory.id==category.id)).order_by(func.random()).limit(8))
 
