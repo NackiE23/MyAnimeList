@@ -1,8 +1,18 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, TextAreaField, DateField, FileField, PasswordField, SubmitField
+from wtforms import StringField, IntegerField, TextAreaField, DateField, FileField, PasswordField, SubmitField, URLField
 from wtforms.validators import Length, DataRequired, EqualTo, ValidationError, Email
 
 from site_package.models import User
+
+
+class AnimeImportForm(FlaskForm):
+    def validate_grade(self, grade_to_check):
+        if 0 > grade_to_check.data or grade_to_check.data > 100:
+            raise ValidationError("Grade must be in the range from 0 to 100!")
+        
+    link = URLField(label="Anime url", validators=[DataRequired()])
+    grade = IntegerField(label="Grade [ ?/100 ]", validators=[DataRequired()])
+    submit = SubmitField()
 
 
 class AnimeModelForm(FlaskForm):

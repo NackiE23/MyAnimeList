@@ -19,7 +19,7 @@
 
 a {
     text-decoration: none;
-    color: inherit;
+    color: var(--secondary);
 }
 
 body {
@@ -52,6 +52,10 @@ body {
 
 .secondary_color {
     color: var(--secondary);
+}
+
+.inherit_color {
+    color: inherit;
 }
 
 .text_align_center {
@@ -251,10 +255,10 @@ body {
     font-weight: bold;
 }
 
-.form p input,
-.form p select,
-.form p textarea {
-    min-width: 250px;
+.form__block input,
+.form__block select,
+.form__block textarea {
+    min-width: 350px;
     padding: 15px 10px;
     font-weight: bold;
     color: var(--secondary);
@@ -262,7 +266,7 @@ body {
     border-radius: 5px;
 }
 
-.form p textarea {
+.form__block textarea {
     max-width: 100%;
 }
 
