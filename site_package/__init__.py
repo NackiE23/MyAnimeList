@@ -14,4 +14,4 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 bcrypt = Bcrypt(app)
 
-from site_package import routes
+from site_package import routes, new_routes, error_handlers

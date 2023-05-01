@@ -1,81 +1,21 @@
 import os
 import uuid
 import datetime
-import random
 
 import requests
 
 from flask import render_template, redirect, url_for, flash, request, Markup
 from flask_login import login_user, logout_user, current_user
-from sqlalchemy.sql.expression import func
 from sqlalchemy import or_
 from werkzeug.utils import secure_filename
 
 from site_package import app, db, parsing
-from site_package.forms import RegisterForm, LoginForm, AnimeModelForm, CategoryForm
-from site_package.models import Anime, User, AnimeCategory, ListCategory, UserAnimeList, anime_categories
+from site_package.forms import RegisterForm, LoginForm, AnimeModelForm
+from site_package.models import Anime, User, AnimeCategory, ListCategory, UserAnimeList
 
 
 def compare_category_with_ids(anime_categories: list, categories_ids: list) -> bool:
     return len(anime_categories) != len(set([cat.id for cat in anime_categories] + categories_ids))
-
-
-@app.route('/new_home', methods=['GET', 'POST'])
-def new_home():
-    pined_categories = ['Comedy', 'Adventure', 'Drama']
-    categories = list(AnimeCategory.query.filter(AnimeCategory.animes.any(), AnimeCategory.name.in_(pined_categories)))
-    categories += list(AnimeCategory.query.filter(AnimeCategory.animes.any(), ~AnimeCategory.name.in_(pined_categories)).order_by(func.random()).limit(5))
-    category_animes = []
-    
-    for category in categories:
-        animes = list(Anime.query.filter(Anime.categories.any(AnimeCategory.id==category.id)).order_by(func.random()).limit(8))
-
-        if len(animes) < 8:
-            animes = random.choices(animes, k=8)
-
-        category_animes.append([category, animes])
-
-    context = {
-        'title': "Index page",
-        'category_animes': category_animes,
-    }
-
-    return render_template('new_home.html', **context)
-
-
-@app.route('/new_categories_list', methods=['GET'])
-def new_categories_list():
-    context = {
-        'title': 'Categories list',
-        'categories': AnimeCategory.query.all(),
-    }
-
-    return render_template('new_categories_list.html', **context)
-
-
-@app.route('/new_category_change/<int:cat_id>', methods=['GET', 'POST'])
-def new_category_change(cat_id):
-    category = AnimeCategory.query.get(cat_id)
-    form = CategoryForm(name=category.name, description=category.description)
-
-    context = {
-        'title': f'Change {category.name} Category',
-        'category': category,
-        'form': form,
-    }
-
-    if request.method == "POST" and form.validate_on_submit():
-        if form.name.data and form.name.data != category.name:
-            category.name = form.name.data
-        if form.description.data and form.description.data != category.description:
-            category.description = form.description.data
-
-        db.session.commit()
-        flash(f"Changes have been saved", category="success")
-
-        return redirect(request.url)
-
-    return render_template('new_category_change.html', **context)
 
 
 @app.route('/change_anime_grade', methods=['POST'])
