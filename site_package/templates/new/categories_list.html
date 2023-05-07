@@ -5,8 +5,9 @@
 
 <div class="container text_align_center">
     <h1>Categories:</h1>
-    {% for category in categories %}
+    
     <div class="categories_list">
+    {% for category in categories %}
         {% if category %}
         <div class="categories_list__item">
             {{ category }} 

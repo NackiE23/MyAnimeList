@@ -7,6 +7,7 @@ import requests
 
 
 from flask import render_template, redirect, url_for, flash, request, Markup
+from sqlalchemy import or_
 from sqlalchemy.sql.expression import func
 from werkzeug.utils import secure_filename
 
@@ -36,6 +37,42 @@ def new_home():
     }
 
     return render_template('new/home.html', **context)
+
+
+@app.route('/new_search_anime', methods=['GET']) 
+def new_search_anime():
+    page = int(request.args.get('page', 1))
+    per_page = 50
+
+    animes = Anime.query.filter(or_(Anime.name.like('%' + request.args.get('name', '') + '%'), 
+                                    Anime.alternative_name.like('%' + request.args.get('name', '') + '%')))
+    if request.args.get('sort', '') == "grade_up":
+        animes = animes.order_by(Anime.grade.asc())
+    else:
+        animes = animes.order_by(Anime.grade.desc())
+    animes = animes.paginate(page=page, per_page=per_page, error_out=False)
+
+    context = {
+        'title': "Search",
+        'animes': animes,
+        'request_args': {k:v for k, v in request.args.items() if k != "page"}
+    }
+
+    return render_template('new/search_anime.html', **context)
+
+
+@app.route('/new_top_list', methods=['GET'])
+def new_top_list():
+    page = int(request.args.get('page', 1))
+    per_page = 50
+
+    context = {
+        'title': "Top List",
+        'animes': Anime.query.order_by(Anime.grade.desc()).paginate(page=page, per_page=per_page, error_out=False),
+        'request_args': {k:v for k, v in request.args.items() if k != "page"}
+    }
+
+    return render_template('new/top_list.html', **context)
 
 
 @app.route('/new_categories_list', methods=['GET'])

@@ -1,0 +1,31 @@
+{% extends "new/base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<div class="container text_align_center">
+    <p>*In future there will be sort functions*</p>
+
+    {% include "parts/search_pages.html" %}
+
+    <div class="anime_list">
+    {% for anime in animes.items %}
+        <div class="anime_list__item">
+            <img class="anime_list__item_image" src="{{ anime.img }}" alt="#">
+            <p class="anime_list__item_name">
+                {{ anime.name }}
+            </p>
+            <div class="anime_list__item_grade">
+                [ {{ anime.grade }}/100 ]
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+
+    {% include "parts/search_pages.html" %}
+</div>
+
+{% endblock %}
+
+{% block script %}
+{% endblock %}
