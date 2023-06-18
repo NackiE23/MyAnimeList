@@ -10,7 +10,7 @@
 
     <div class="anime_list">
     {% for anime in animes.items %}
-        <div class="anime_list__item">
+        <a class="anime_list__item" href="{{ url_for('new_anime_page', anime_id=anime.id) }}">
             <img class="anime_list__item_image" src="{{ anime.img }}" alt="#">
             <p class="anime_list__item_name">
                 {{ anime.name }}
@@ -18,7 +18,7 @@
             <div class="anime_list__item_grade">
                 [ {{ anime.grade }}/100 ]
             </div>
-        </div>
+        </a>
     {% endfor %}
     </div>
 

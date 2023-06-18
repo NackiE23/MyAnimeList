@@ -1,0 +1,23 @@
+{% extends 'new/base.html' %}
+
+{% block content %}
+{{ super() }}
+
+<div class="container text_align_center">
+    
+    <div class="anime">
+        <div class="anime_block">
+            <img class="anime__image" src="{{ anime.img }}" alt="#">
+        </div>
+        <div class="anime_block anime__info">
+            <b class="anime__grade">{{anime.grade}}</b><span class="anime__grade_max">/100</span>
+            <h2 class="anime__name">{{ anime.name }}</h2>
+        </div>
+        <div class="anime_block anime__description">
+            {{ anime.description }}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

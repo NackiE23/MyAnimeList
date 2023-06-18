@@ -12,7 +12,7 @@ from sqlalchemy.sql.expression import func
 from werkzeug.utils import secure_filename
 
 from site_package import app, db, parsing
-from site_package.forms import CategoryForm, AnimeImportForm
+from site_package.forms import CategoryForm
 from site_package.models import Anime, AnimeCategory
 
 
@@ -112,19 +112,20 @@ def new_category_change(cat_id):
 
 @app.route('/new_import_anime_from_mal', methods=['GET', 'POST'])
 def new_import_anime_from_mal():
-    form = AnimeImportForm(grade=0)
-
     context = {
-        'title': f'Import anime from MAL',
-        'form': form,
+        'title': f'Import anime from MAL'
     }
 
-    if request.method == "POST" and form.validate_on_submit():
+    if request.method == "POST":        
         anime_url = request.form['url']
         data = parsing.parse_mal_anime_page(anime_url)
 
         release = datetime.datetime.strptime(data['release'], '%b %d %Y').date()
-        grade = request.form['grade']
+        grade = int(request.form['grade'])
+
+        if not 0 <= grade <= 100:
+            flash('Grade', category='danger')
+            return render_template('new/import_anime.html', **context)
 
         # Main info
         anime = Anime(
@@ -171,3 +172,14 @@ def new_import_anime_from_mal():
         flash(Markup(f"Anime {anime.name} has been imported! <a href='{ url_for('change_anime_page', anime_id=anime.id) }'>Link here</a>"), category="success")
 
     return render_template('new/import_anime.html', **context)
+
+
+@app.route('/new_anime/<int:anime_id>', methods=['GET'])
+def new_anime_page(anime_id):
+    anime = Anime.query.get(anime_id)
+
+    context = {
+        'title': anime.name,
+        'anime': anime,
+    }
+    return render_template('new/anime.html', **context)

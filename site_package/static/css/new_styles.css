@@ -8,7 +8,8 @@
     --gray: #BCBBC0;
     --error-color: #f03329;
     --success-color: transparent;
-    --border: 2px solid var(--secondary);
+    --secondary-border: 2px solid var(--secondary);
+    --gray-border: 2px solid var(--gray);
 }
 
 * {
@@ -66,7 +67,7 @@ body {
 /* NAVBAR */
 .menu {
     background-color: var(--secondary-bg);
-    border-bottom: var(--border);
+    border-bottom: var(--secondary-border);
 }
 
 .menu .container {
@@ -158,7 +159,7 @@ body {
     width: 100%;
     padding: 10px 20px;
     line-height: 28px;
-    border-bottom: var(--border);
+    border-bottom: var(--secondary-border);
     text-align: center;
     font-weight: bold;
 }
@@ -186,7 +187,7 @@ body {
     padding: 15px 10px;
     font-weight: bold;
     color: var(--secondary);
-    border: var(--border);
+    border: var(--secondary-border);
     border-radius: 5px;
 }
 
@@ -228,6 +229,7 @@ body {
     position: relative;
     max-height: 350px;
     padding: 15px;
+    color: inherit;
 }
 
 .preview_genre_list__item:hover > .preview_genre_list__item_image {
@@ -290,12 +292,56 @@ body {
 }
 
 
+/* ANIME */
+.anime {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.anime_block {
+    text-align: left;
+    flex: 0 0 33.3333%;
+    padding: 0 15px;
+}
+
+.anime__description {
+    border-left: var(--gray-border);
+}
+
+.anime__image {
+    max-width: 300px;
+    width: 100%;
+}
+
+.anime__grade {
+    font-size: 18px;
+}
+
+.anime__grade_max {
+    font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+    .anime_block {
+        flex: 0 0 50%;
+    }
+
+    .anime__description {
+        flex: 0 0 100%;
+        padding-top: 15px;
+        margin-top: 15px;
+        border-left: none;
+        border-top: var(--gray-border);
+    }
+}
+
+
 /* ANIME LIST */
 .anime_list {
     margin: 50px 0;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
     gap: 15px 15px;
 }
 
@@ -303,6 +349,7 @@ body {
     position: relative;
     max-height: 350px;
     padding: 15px;
+    color: inherit;
 }
 
 .anime_list__item:hover > .anime_list__item_image {
@@ -362,6 +409,18 @@ body {
 
 .anime_list__item:hover > .anime_list__item_grade {
     display: none;
+}
+
+@media (max-width: 1040px) {
+    .anime_list {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+}
+
+@media (max-width: 790px) {
+    .anime_list {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
 }
 
 

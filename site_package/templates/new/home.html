@@ -6,51 +6,17 @@
 <div class="container">
     {% for category, animes in category_animes %}
     <div class="preview_genre_list">
-        <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="{{ animes[0].img }}" alt="#">
+        {% for anime in animes[:5] %}
+        <a class="preview_genre_list__item" href="{{ url_for('new_anime_page', anime_id=anime.id) }}">
+            <img class="preview_genre_list__item_image" src="{{ anime.img }}" alt="#">
             <p class="preview_genre_list__item_name">
-                {{ animes[0].name }}
+                {{ anime.name }}
             </p>
             <div class="preview_genre_list__item_grade">
-                [ {{ animes[0].grade }}/100 ]
+                [ {{ anime.grade }}/100 ]
             </div>
-        </div>
-        <div class="preview_genre_list__item">
-                <img class="preview_genre_list__item_image" src="{{ animes[1].img }}" alt="#">
-                <p class="preview_genre_list__item_name">
-                    {{ animes[1].name }}
-                </p>
-                <div class="preview_genre_list__item_grade">
-                    [ {{ animes[1].grade }}/100 ]
-                </div>
-        </div>
-        <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="{{ animes[2].img }}" alt="#">
-            <p class="preview_genre_list__item_name">
-                {{ animes[2].name }}
-            </p>
-            <div class="preview_genre_list__item_grade">
-                [ {{ animes[2].grade }}/100 ]
-            </div>
-        </div>
-        <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="{{ animes[3].img }}" alt="#">
-            <p class="preview_genre_list__item_name">
-                {{ animes[3].name }}
-            </p>
-            <div class="preview_genre_list__item_grade">
-                [ {{ animes[3].grade }}/100 ]
-            </div>
-        </div>
-        <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="{{ animes[4].img }}" alt="#">
-            <p class="preview_genre_list__item_name">
-                {{ animes[4].name }}
-            </p>
-            <div class="preview_genre_list__item_grade">
-                [ {{ animes[4].grade }}/100 ]
-            </div>
-        </div>
+        </a>
+        {% endfor %}
         <div class="preview_genre_list__item presentation">
             <h1>{{ category.name }}</h1>
             <p>
@@ -59,33 +25,17 @@
             <a href="#" class="preview_genre_list__item_link button">See more</a>
 
         </div>
-        <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="{{ animes[5].img }}" alt="#">
+        {% for anime in animes[5:8] %}
+        <a class="preview_genre_list__item" href="{{ url_for('new_anime_page', anime_id=anime.id) }}">
+            <img class="preview_genre_list__item_image" src="{{ anime.img }}" alt="#">
             <p class="preview_genre_list__item_name">
-                {{ animes[5].name }}
+                {{ anime.name }}
             </p>
             <div class="preview_genre_list__item_grade">
-                [ {{ animes[5].grade }}/100 ]
+                [ {{ anime.grade }}/100 ]
             </div>
-        </div>
-        <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="{{ animes[6].img }}" alt="#">
-            <p class="preview_genre_list__item_name">
-                {{ animes[6].name }}
-            </p>
-            <div class="preview_genre_list__item_grade">
-                [ {{ animes[6].grade }}/100 ]
-            </div>
-        </div>
-        <div class="preview_genre_list__item">
-            <img class="preview_genre_list__item_image" src="{{ animes[7].img }}" alt="#">
-            <p class="preview_genre_list__item_name">
-                {{ animes[7].name }}
-            </p>
-            <div class="preview_genre_list__item_grade">
-                [ {{ animes[7].grade }}/100 ]
-            </div>
-        </div>
+        </a>
+        {% endfor %}
     </div>
     {% endfor %}
 </div>

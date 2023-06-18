@@ -7,19 +7,17 @@
     <form method="POST" class="form">
         <h1>Import anime from <a href="https://myanimelist.net">MAL</a></h1>
 
-        {{ form.hidden_tag() }}
-
         <p class="form__block">
-            {{ form.link.label(class="") }}
-            {{ form.link(placeholder="Link...") }}
+            <label class="" for="url">Anime url</label>
+            <input id="url" name="url" placeholder="Paste Url Here..." required type="url">
         </p>
 
         <p class="form__block">
-            {{ form.grade.label(class="") }}
-            {{ form.grade(min=0, max=100, placeholder="Grade...") }}
+            <label class="" for="grade">Grade [ ?/100 ]</label>
+            <input id="grade" name="grade" placeholder="Grade..." required type="number" value="0" min="0" max="100">
         </p>
 
-        {{ form.submit(value="Import", class="form__submit button") }}
+        <input class="form__submit button" id="submit" name="submit" type="submit" value="Import">
     </form>
 </div>
 {% endblock %}
