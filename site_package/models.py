@@ -1,4 +1,4 @@
-from  datetime import datetime
+from datetime import datetime
 from flask_login import UserMixin
 
 from site_package import db, login_manager, bcrypt
@@ -19,7 +19,9 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(length=100), nullable=False, unique=True)
     password_hash = db.Column(db.String(length=60), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+
     anime_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('user', lazy=True))
+    comment = db.relationship("Comment", lazy='subquery', backref=db.backref('user', lazy=True))
 
     def __repr__(self):
         return self.name
@@ -54,9 +56,11 @@ class Anime(db.Model):
     grade = db.Column(db.Integer(), nullable=True, default=0)
     img = db.Column(db.String(), nullable=True)
     related_anime_list = db.Column(db.Integer, db.ForeignKey('related_anime_list.id'), nullable=True)
+
     categories = db.relationship("AnimeCategory", secondary=anime_categories, lazy='subquery',
                                  backref=db.backref('animes', lazy=True))
     user_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('anime', lazy=True))
+    comments = db.relationship("Comment", lazy='subquery', backref=db.backref('anime', lazy=True))
 
     def __repr__(self):
         return self.name
@@ -85,7 +89,6 @@ class AnimeCategory(db.Model):
         return self.name
 
 
-
 class RelatedAnimeList(db.Model):
     __tablename__ = "related_anime_list"
 
@@ -97,18 +100,20 @@ class Comment(db.Model):
     __tablename__ = "comment"
 
     id = db.Column(db.Integer(), primary_key=True)
-    created = db.Column(db.DateTime, default=datetime.utcnow)
-    last_changes = db.Column(db.DateTime, nullable=True)
-    user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    text = db.Column(db.String(), nullable=True)
+    created = db.Column(db.DateTime, default=datetime.now)
+    last_changes = db.Column(db.DateTime, nullable=True, default=datetime.now, onupdate=datetime.now)
+    text = db.Column(db.String(), nullable=False)
     grade = db.Column(db.Integer(), nullable=True, default=0)
 
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'), nullable=False)
 
 class ListCategory(db.Model):
     __tablename__ = "list_category"
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(length=40), nullable=False, unique=True)
+
     user_anime_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('list_category', lazy=True))
 
     def __repr__(self):

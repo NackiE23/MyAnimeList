@@ -7,13 +7,14 @@ import requests
 
 
 from flask import render_template, redirect, url_for, flash, request, Markup
+from flask_login import current_user
 from sqlalchemy import or_
 from sqlalchemy.sql.expression import func
 from werkzeug.utils import secure_filename
 
 from site_package import app, db, parsing
 from site_package.forms import CategoryForm
-from site_package.models import Anime, AnimeCategory
+from site_package.models import Anime, AnimeCategory, Comment
 
 
 @app.route('/new_home', methods=['GET', 'POST'])
@@ -174,12 +175,33 @@ def new_import_anime_from_mal():
     return render_template('new/import_anime.html', **context)
 
 
-@app.route('/new_anime/<int:anime_id>', methods=['GET'])
+@app.route('/new_anime/<int:anime_id>', methods=['GET', 'POST'])
 def new_anime_page(anime_id):
     anime = Anime.query.get(anime_id)
+    comments = Comment.query.filter_by(anime_id=anime_id).order_by(Comment.created.desc()).all()
 
     context = {
         'title': anime.name,
         'anime': anime,
+        'comments': comments
     }
+
+    if request.method == "POST":
+        # Comment instance
+        comment = Comment(
+            user_id=current_user.id,
+            anime_id=anime.id,
+            text=request.form.get('comment_text')
+        )
+
+        if request.form.get('comment_grade_permission'):
+            comment.grade = request.form.get('comment_grade')
+        
+        # Comment commit
+        db.session.add(comment)
+        db.session.commit()
+
+        flash(f"Comment has been successfuly added!", category="success")
+        return redirect(request.url)
+
     return render_template('new/anime.html', **context)
