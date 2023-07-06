@@ -15,3 +15,7 @@ login_manager = LoginManager(app)
 bcrypt = Bcrypt(app)
 
 from site_package import routes, new_routes, error_handlers
+
+# Create tables
+# with app.app_context():
+#     db.create_all()

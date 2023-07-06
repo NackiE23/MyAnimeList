@@ -1,3 +1,4 @@
+from  datetime import datetime
 from flask_login import UserMixin
 
 from site_package import db, login_manager, bcrypt
@@ -12,6 +13,8 @@ class User(db.Model, UserMixin):
     __tablename__ = "user"
 
     id = db.Column(db.Integer(), primary_key=True)
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+    avatar = db.Column(db.String(), nullable=True)
     name = db.Column(db.String(length=60), nullable=False)
     email = db.Column(db.String(length=100), nullable=False, unique=True)
     password_hash = db.Column(db.String(length=60), nullable=False)
@@ -50,6 +53,7 @@ class Anime(db.Model):
     description = db.Column(db.String(length=1024), nullable=True)
     grade = db.Column(db.Integer(), nullable=True, default=0)
     img = db.Column(db.String(), nullable=True)
+    related_anime_list = db.Column(db.Integer, db.ForeignKey('related_anime_list.id'), nullable=True)
     categories = db.relationship("AnimeCategory", secondary=anime_categories, lazy='subquery',
                                  backref=db.backref('animes', lazy=True))
     user_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('anime', lazy=True))
@@ -79,6 +83,25 @@ class AnimeCategory(db.Model):
 
     def __repr__(self):
         return self.name
+
+
+
+class RelatedAnimeList(db.Model):
+    __tablename__ = "related_anime_list"
+
+    id = db.Column(db.Integer(), primary_key=True)
+    animes = db.Column(db.String(), nullable=True)
+
+
+class Comment(db.Model):
+    __tablename__ = "comment"
+
+    id = db.Column(db.Integer(), primary_key=True)
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+    last_changes = db.Column(db.DateTime, nullable=True)
+    user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    text = db.Column(db.String(), nullable=True)
+    grade = db.Column(db.Integer(), nullable=True, default=0)
 
 
 class ListCategory(db.Model):
