@@ -9,15 +9,78 @@
         <div class="anime_block">
             <img class="anime__image" src="{{ anime.img }}" alt="#">
         </div>
+
         <div class="anime_block anime__info">
             <b class="anime__grade">{{anime.grade}}</b><span class="anime__grade_max">/100</span>
             <h2 class="anime__name">{{ anime.name }}</h2>
+            {% if anime.alternative_name != "None" and anime.alternative_name %}
+                <p>{{ anime.alternative_name }}</p>
+            {% endif %}
+            <p class="anime__info_item">Release: <b>{{ anime.release }}</b></p>
+            <p class="anime__info_item">Categories: <b>{{ anime.categories }}</b></p>
         </div>
+
         <div class="anime_block anime__description">
             {{ anime.description }}
         </div>
     </div>
 
+    <div class="comments">
+        <div class="comments__header">
+            <h2>Comments</h2>
+
+            <span class="button">1 Reviews</span>
+        </div>
+
+        <form class="comments__create" method="POST">
+            <div class="comments__create_block">
+                <input class="comments__create_input text" type="text" placeholder="Type your comment here...">
+
+                <input type="checkbox" id="comment_grade_checkbox" name="comment_grade">
+                <label for="comment_grade_checkbox">Comment with grade</label>
+
+                <div class="comments__create_input_grade readonly">
+                    <input class="comments__create_input grade" type="number" min="0" max="100" value="0">
+                    <span class="anime__grade_max">/100</span>
+                </div>
+            </div>
+
+            <div class="comments__create_block">
+                <input class="comments__create_submit form__submit button" type="submit" value="Publish">
+            </div>
+        </form>
+        
+        <div class="comments__comment">
+            <img class="user_avatar" src="/static/uploads/avatars/default.jpg">
+            
+            <div class="comments__comment_info">
+                <div class="user">
+                    <b>NackiE23</b> 100<span class="anime__grade_max">/100</span>
+                </div>
+    
+                <div class="text">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Odio nostrum itaque doloremque, assumenda voluptate perspiciatis pariatur. Blanditiis saepe molestias ullam voluptatibus itaque in autem non animi esse obcaecati? Cupiditate, enim!
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
+{% endblock %}
+
+{% block script %}
+<script>
+
+$("#comment_grade_checkbox").change(function() {
+    if ($(this).prop('checked') == true) {
+        $(".comments__create_input_grade").removeClass('readonly');
+        $(".comments__create_input.grade").prop('readonly', false);
+    } else {
+        $(".comments__create_input_grade").addClass('readonly');
+        $(".comments__create_input.grade").prop('readonly', true);
+    }
+});
+
+</script>
 {% endblock %}

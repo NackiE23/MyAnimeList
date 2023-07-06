@@ -1,11 +1,12 @@
 :root {
     --main-bg: #101010;
     --secondary-bg: #121116;
+    --secondary-light-bg: #181820;
     --white: #FFFEFB;
     --smoke: rgba(255, 255, 255, .9);
     --secondary: #634AFE;
     --secondary-transparent: rgba(99, 74, 254, .9);
-    --gray: #BCBBC0;
+    --gray: #afaeb3;
     --error-color: #f03329;
     --success-color: transparent;
     --secondary-border: 2px solid var(--secondary);
@@ -74,12 +75,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     padding: 25px 0;
 }
 
 .menu__logo {
     font-size: 42px;
     font-weight: 500;
+    margin: 0 auto;
 }
 
 .menu__links {
@@ -110,7 +113,11 @@ body {
 
 .menu__links_link:last-child {
     margin: 0;
-}  
+}
+
+.menu__input {
+    margin: 0 auto 5px auto;
+}
 
 .menu__input_form {
     color: var(--secondary);
@@ -145,6 +152,7 @@ body {
 
 .menu__extra_links {
     display: inherit;
+    margin: 0 auto;
 }
 
 .menu__extra_links_link {
@@ -213,6 +221,12 @@ body {
 .pages__page_link {
     padding: 5px 20px;
     margin: 0 5px;
+}
+
+@media (max-width: 540px) {
+    .pages__page_link {
+        padding: 2px 10px;
+    }
 }
 
 
@@ -319,7 +333,99 @@ body {
 }
 
 .anime__grade_max {
-    font-size: 14px;
+    font-size: 12px;
+}
+
+.anime__info_item {
+    padding: 5px 0;
+}
+
+.comments {
+    text-align: left;
+    margin: 20px 15px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--secondary-light-bg);
+}
+
+.comments__header {
+    display: flex;
+}
+
+.comments__header span {
+    margin-left: 20px;
+}
+
+.comments__create {
+    background-color: var(--main-bg);
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.comments__create_block:first-child,
+.comments__create_block > .comments__create_input {
+    width: 100%;
+}
+
+.comments__create_block:nth-child(2) {
+    margin: 0 0 0 auto;
+}
+
+.comments__create_input {
+    margin: 10px 0;
+}
+
+.comments__create_input.text,
+.comments__create_input.grade {
+    background-color: transparent;
+    border: none;
+    border-bottom: var(--gray-border);
+    color: var(--white);
+    padding: 5px;
+    font-size: inherit;
+}
+
+.comments__create_input.grade {
+    width: 65px;
+}
+
+.comments__create_input_grade {
+    transition: all .3s;
+}
+
+.comments__create_input_grade.readonly {
+    filter: blur(5px);
+}
+
+.comments__create_submit {
+    margin: 0 0 0 15px;
+}
+
+.comments__comment {
+    background-color: var(--main-bg);
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 10px;
+    display: flex;
+    font-size: 16px;
+}
+
+.user_avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+.comments__comment_info > .user {
+    color: var(--gray);
+}
+
+.comments__comment_info > .text {
+    margin-top: 5px;
 }
 
 @media (max-width: 1024px) {
@@ -420,6 +526,12 @@ body {
 @media (max-width: 790px) {
     .anime_list {
         grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+@media (max-width: 540px) {
+    .anime_list {
+        grid-template-columns: 1fr 1fr;
     }
 }
 

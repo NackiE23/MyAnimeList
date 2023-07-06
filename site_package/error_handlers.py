@@ -10,6 +10,7 @@ BadRequest -- 400
 Unauthorized -- 401
 Forbidden -- 403
 NotFound -- 404
+MethodNotAllowed -- 405
 
 InternalServerError -- 500
 GatewayTimeout -- 504
@@ -54,6 +55,16 @@ def handle_bad_request(e):
     }
 
     return render_template('new/error_template.html', **context), 404
+
+
+@app.errorhandler(werkzeug.exceptions.MethodNotAllowed)
+def handle_bad_request(e):
+    context = {
+        'title': "405 Error",
+        'error_message': "Method Not Allowed. What are you wanna do?",
+    }
+
+    return render_template('new/error_template.html', **context), 405
 
 
 @app.errorhandler(werkzeug.exceptions.InternalServerError)
