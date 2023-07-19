@@ -178,11 +178,13 @@ def new_import_anime_from_mal():
 @app.route('/new_anime/<int:anime_id>', methods=['GET', 'POST'])
 def new_anime_page(anime_id):
     anime = Anime.query.get_or_404(anime_id)
+    related_anime = RelatedAnime.query.filter_by(to_anime_id=anime_id)
     comments = Comment.query.filter_by(anime_id=anime_id).order_by(Comment.created.desc()).all()
 
     context = {
         'title': anime.name,
         'anime': anime,
+        'related_anime': related_anime,
         'comments': comments
     }
 
@@ -210,7 +212,11 @@ def new_anime_page(anime_id):
 @app.route('/related_anime/<int:anime_id>/add', methods=['GET', 'POST'])
 def add_related_anime(anime_id):
     cur_anime = Anime.query.get_or_404(anime_id)
-    animes = Anime.query.filter(Anime.id != anime_id)
+    cur_related_anime = RelatedAnime.query.filter_by(to_anime_id=anime_id)
+
+    unused_anime = [anime_id] + [anime.anime.id for anime in cur_related_anime]
+
+    animes = Anime.query.filter(Anime.id.not_in(unused_anime))
     relation_categories = RelationCategory.query.all()
 
     if request.method == "POST":

@@ -341,6 +341,26 @@ body {
     padding: 5px 0;
 }
 
+.related {
+    text-align: left;
+    margin: 20px 15px;
+    padding: 20px;
+}
+
+.related_list {
+    display: flex;
+    margin: 20px 0;
+}
+
+.related_list__item {
+    margin-right: 20px;
+}
+
+.related_list__item_image {
+    width: 225px;
+    height: 300px;
+}
+
 .comments {
     text-align: left;
     margin: 20px 15px;

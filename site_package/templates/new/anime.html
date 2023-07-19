@@ -25,6 +25,27 @@
         </div>
     </div>
 
+    <div class="related">
+        <a class="related__button button" href="{{ url_for('add_related_anime', anime_id=anime.id) }}">Add relation</a>
+
+        <div class="related_list">
+            {% for rel_anime in related_anime %}
+                <a class="related_list__item" href="{{ url_for('new_anime_page', anime_id=rel_anime.anime.id) }}">
+                    <img class="related_list__item_image" src="{{ rel_anime.anime.img }}" alt="#">
+                    <p class="related_list__item_name">
+                        {{ rel_anime.relation_category }}
+                    </p>
+                    <p class="related_list__item_name">
+                        {{ rel_anime.anime.name }}
+                    </p>
+                    <div class="related_list__item_grade">
+                        [ {{ rel_anime.anime.grade }}/100 ]
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
     <div class="comments">
         <div class="comments__header">
             <h2>Comments</h2>

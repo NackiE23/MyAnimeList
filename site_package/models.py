@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask_login import UserMixin
+from sqlalchemy.orm import relationship
 
 from site_package import db, login_manager, bcrypt
 
@@ -109,6 +110,12 @@ class RelatedAnime(db.Model):
     to_anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'), nullable=False)
     anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'), nullable=False)
 
+    relation_category = db.relationship("RelationCategory", foreign_keys=[relation_category_id])
+    to_anime = db.relationship("Anime", foreign_keys=[to_anime_id])
+    anime = db.relationship("Anime", foreign_keys=[anime_id])
+
+    def __repr__(self):
+        return f"{self.anime}"
 
 
 class Comment(db.Model):
