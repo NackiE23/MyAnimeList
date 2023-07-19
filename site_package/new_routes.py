@@ -14,7 +14,7 @@ from werkzeug.utils import secure_filename
 
 from site_package import app, db, parsing
 from site_package.forms import CategoryForm
-from site_package.models import Anime, AnimeCategory, Comment
+from site_package.models import Anime, AnimeCategory, Comment, RelationCategory, RelatedAnime
 
 
 @app.route('/new_home', methods=['GET', 'POST'])
@@ -88,7 +88,7 @@ def new_categories_list():
 
 @app.route('/new_category_change/<int:cat_id>', methods=['GET', 'POST'])
 def new_category_change(cat_id):
-    category = AnimeCategory.query.get(cat_id)
+    category = AnimeCategory.query.get_or_404(cat_id)
     form = CategoryForm(name=category.name, description=category.description)
 
     context = {
@@ -177,7 +177,7 @@ def new_import_anime_from_mal():
 
 @app.route('/new_anime/<int:anime_id>', methods=['GET', 'POST'])
 def new_anime_page(anime_id):
-    anime = Anime.query.get(anime_id)
+    anime = Anime.query.get_or_404(anime_id)
     comments = Comment.query.filter_by(anime_id=anime_id).order_by(Comment.created.desc()).all()
 
     context = {
@@ -205,3 +205,41 @@ def new_anime_page(anime_id):
         return redirect(request.url)
 
     return render_template('new/anime.html', **context)
+
+
+@app.route('/related_anime/<int:anime_id>/add', methods=['GET', 'POST'])
+def add_related_anime(anime_id):
+    cur_anime = Anime.query.get_or_404(anime_id)
+    animes = Anime.query.filter(Anime.id != anime_id)
+    relation_categories = RelationCategory.query.all()
+
+    if request.method == "POST":
+        related_anime_id = request.form.get('related_anime_id')
+        relation_category_id = request.form.get('relation_category_id')
+
+        if related_anime_id and relation_category_id:
+            # Create related anime instance
+            rel_anime = RelatedAnime(
+                to_anime_id = anime_id,
+                relation_category_id = relation_category_id,
+                anime_id = related_anime_id
+            )
+
+            # Related anime commit
+            db.session.add(rel_anime)
+            db.session.commit()
+
+            # Generate success message
+            flash(f"Related anime have been added", category="success")
+
+            # Redirect to main anime page
+            return redirect(url_for('new_anime_page', anime_id=anime_id))
+
+    context = {
+        'title': f'Add related anime to {cur_anime.name}',
+        'cur_anime': cur_anime,
+        'animes': animes,
+        'relation_categories': relation_categories,
+    }
+
+    return render_template('new/add_related_anime.html', **context)

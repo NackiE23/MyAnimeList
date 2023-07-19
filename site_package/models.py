@@ -55,7 +55,6 @@ class Anime(db.Model):
     description = db.Column(db.String(length=1024), nullable=True)
     grade = db.Column(db.Integer(), nullable=True, default=0)
     img = db.Column(db.String(), nullable=True)
-    related_anime_list = db.Column(db.Integer, db.ForeignKey('related_anime_list.id'), nullable=True)
 
     categories = db.relationship("AnimeCategory", secondary=anime_categories, lazy='subquery',
                                  backref=db.backref('animes', lazy=True))
@@ -89,11 +88,27 @@ class AnimeCategory(db.Model):
         return self.name
 
 
-class RelatedAnimeList(db.Model):
-    __tablename__ = "related_anime_list"
+class RelationCategory(db.Model):
+    __tablename__ = "relation_category"
+    
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(), nullable=False, unique=True)
+    priority = db.Column(db.Integer(), nullable=False, unique=True)
+
+    def __repr__(self):
+        return f'{self.name}'
+
+
+class RelatedAnime(db.Model):
+    __tablename__ = "related_anime"
 
     id = db.Column(db.Integer(), primary_key=True)
-    animes = db.Column(db.String(), nullable=True)
+
+    relation_category_id = db.Column(db.Integer, db.ForeignKey('relation_category.id'), nullable=False)
+    # for 'to_anime' pinnes 'anime' 
+    to_anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'), nullable=False)
+    anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'), nullable=False)
+
 
 
 class Comment(db.Model):
@@ -107,6 +122,7 @@ class Comment(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'), nullable=False)
+
 
 class ListCategory(db.Model):
     __tablename__ = "list_category"
