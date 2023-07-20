@@ -22,7 +22,7 @@
             <p>
                 {% if category.description %}{{ category.description }}{% endif %}
             </p>
-            <a href="#" class="preview_genre_list__item_link button">See more</a>
+            <a href="{{ url_for('category_info', cat_id=category.id) }}" class="preview_genre_list__item_link button">See more</a>
 
         </div>
         {% for anime in animes[5:8] %}

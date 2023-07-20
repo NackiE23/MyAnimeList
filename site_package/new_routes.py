@@ -76,8 +76,8 @@ def new_top_list():
     return render_template('new/top_list.html', **context)
 
 
-@app.route('/new_categories_list', methods=['GET'])
-def new_categories_list():
+@app.route('/categories_list', methods=['GET'])
+def categories_list():
     context = {
         'title': 'Categories list',
         'categories': AnimeCategory.query.all(),
@@ -86,8 +86,28 @@ def new_categories_list():
     return render_template('new/categories_list.html', **context)
 
 
-@app.route('/new_category_change/<int:cat_id>', methods=['GET', 'POST'])
-def new_category_change(cat_id):
+@app.route('/category/<int:cat_id>', methods=['GET'])
+def category_info(cat_id):
+    category = AnimeCategory.query.get_or_404(cat_id)
+    animes = Anime.query.order_by(Anime.grade.desc()).filter(Anime.categories.any(AnimeCategory.id==category.id))
+
+    page = int(request.args.get('page', 1))
+    per_page = 50
+    paginated_animes = animes.paginate(page=page, per_page=per_page, error_out=False)
+
+    context = {
+        'title': f'{category.name} anime',
+        'category': category,
+        'animes': paginated_animes,
+        'anime_count': animes.count(),
+        'average_rating': round(animes.with_entities(func.avg(Anime.grade).label('average')).first()[0], 2),
+    }
+
+    return render_template('new/category.html', **context)
+
+
+@app.route('/category_change/<int:cat_id>', methods=['GET', 'POST'])
+def category_change(cat_id):
     category = AnimeCategory.query.get_or_404(cat_id)
     form = CategoryForm(name=category.name, description=category.description)
 
@@ -212,11 +232,13 @@ def new_anime_page(anime_id):
 @app.route('/related_anime/<int:anime_id>/add', methods=['GET', 'POST'])
 def add_related_anime(anime_id):
     cur_anime = Anime.query.get_or_404(anime_id)
-    cur_related_anime = RelatedAnime.query.filter_by(to_anime_id=anime_id)
 
-    unused_anime = [anime_id] + [anime.anime.id for anime in cur_related_anime]
+    # 'not_in' doesn't work in pythonanywhere.
+    # cur_related_anime = RelatedAnime.query.filter_by(to_anime_id=anime_id)
+    # unused_anime = [anime_id] + [anime.anime.id for anime in cur_related_anime]
+    # animes = Anime.query.filter(Anime.id.not_in(unused_anime))
 
-    animes = Anime.query.filter(Anime.id.not_in(unused_anime))
+    animes = Anime.query.filter(Anime.id != anime_id)
     relation_categories = RelationCategory.query.all()
 
     if request.method == "POST":

@@ -1,6 +1,5 @@
 from datetime import datetime
 from flask_login import UserMixin
-from sqlalchemy.orm import relationship
 
 from site_package import db, login_manager, bcrypt
 

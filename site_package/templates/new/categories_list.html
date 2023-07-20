@@ -11,7 +11,7 @@
         {% if category %}
         <div class="categories_list__item">
             {{ category }} 
-            <a href="{{ url_for('new_category_change', cat_id=category.id) }}">Change</a>
+            <a href="{{ url_for('category_change', cat_id=category.id) }}">Change</a>
         </div>
         {% endif %}
     {% endfor %}
