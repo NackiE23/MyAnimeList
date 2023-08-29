@@ -65,7 +65,7 @@ def new_search_anime():
 @app.route('/new_top_list', methods=['GET'])
 def new_top_list():
     page = int(request.args.get('page', 1))
-    per_page = 50
+    per_page = int(request.args.get('per_page', 50))
 
     context = {
         'title': "Top List",
