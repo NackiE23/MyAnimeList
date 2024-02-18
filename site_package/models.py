@@ -20,7 +20,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(length=60), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
-    anime_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('user', lazy=True))
+    media_list = db.relationship("UserMediaList", lazy='subquery', backref=db.backref('user', lazy=True))
     comment = db.relationship("Comment", lazy='subquery', backref=db.backref('user', lazy=True))
 
     def __repr__(self):
@@ -38,15 +38,27 @@ class User(db.Model, UserMixin):
         return bcrypt.check_password_hash(self.password_hash, password)
 
 
-anime_categories = db.Table(
-    'anime_category',
-    db.Column('anime_id', db.Integer, db.ForeignKey('anime.id'), primary_key=True),
+media_categories = db.Table(
+    'media_category',
+    db.Column('media_id', db.Integer, db.ForeignKey('media.id'), primary_key=True),
     db.Column('category_id', db.Integer, db.ForeignKey('category.id'), primary_key=True),
 )
 
 
-class Anime(db.Model):
-    __tablename__ = "anime"
+class MediaType(db.Model):
+    __tablename__ = "media_type"
+
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(length=255), nullable=False)
+
+    media = db.relationship("Media", back_populates="type", uselist=False, lazy='subquery')
+
+    def __repr__(self):
+        return self.name
+
+
+class Media(db.Model):
+    __tablename__ = "media"
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(length=60), nullable=False)
@@ -54,12 +66,15 @@ class Anime(db.Model):
     release = db.Column(db.Date(), nullable=False)
     description = db.Column(db.String(length=1024), nullable=True)
     grade = db.Column(db.Integer(), nullable=True, default=0)
-    img = db.Column(db.String(), nullable=True)
+    img = db.Column(db.String(), default="/static/images/base/default.png", nullable=True)
 
-    categories = db.relationship("AnimeCategory", secondary=anime_categories, lazy='subquery',
-                                 backref=db.backref('animes', lazy=True))
-    user_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('anime', lazy=True))
-    comments = db.relationship("Comment", lazy='subquery', backref=db.backref('anime', lazy=True))
+    type_id = db.Column(db.Integer, db.ForeignKey("media_type.id"), nullable=False)
+    type = db.relationship("MediaType", back_populates="media", lazy='subquery')
+
+    categories = db.relationship("MediaCategory", secondary=media_categories, lazy='subquery',
+                                 backref=db.backref('medias', lazy=True))
+    user_list = db.relationship("UserMediaList", lazy='subquery', backref=db.backref('media', lazy=True))
+    comments = db.relationship("Comment", lazy='subquery', backref=db.backref('media', lazy=True))
 
     def __repr__(self):
         return self.name
@@ -74,10 +89,10 @@ class Anime(db.Model):
         return f"{number_to_month(self.release.month)} {self.release.day}, {self.release.year}"
 
     def get_url(self):
-        return f"/#anime_{self.id}"
+        return f"/#media_{self.id}"
 
 
-class AnimeCategory(db.Model):
+class MediaCategory(db.Model):
     __tablename__ = "category"
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -90,7 +105,7 @@ class AnimeCategory(db.Model):
 
 class RelationCategory(db.Model):
     __tablename__ = "relation_category"
-    
+
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False, unique=True)
     priority = db.Column(db.Integer(), nullable=False, unique=True)
@@ -99,22 +114,22 @@ class RelationCategory(db.Model):
         return f'{self.name}'
 
 
-class RelatedAnime(db.Model):
-    __tablename__ = "related_anime"
+class RelatedMedia(db.Model):
+    __tablename__ = "related_media"
 
     id = db.Column(db.Integer(), primary_key=True)
 
     relation_category_id = db.Column(db.Integer, db.ForeignKey('relation_category.id'), nullable=False)
-    # for 'to_anime' pinnes 'anime' 
-    to_anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'), nullable=False)
-    anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'), nullable=False)
+    # for 'to_media' pinnes 'media'
+    to_media_id = db.Column(db.Integer, db.ForeignKey('media.id'), nullable=False)
+    media_id = db.Column(db.Integer, db.ForeignKey('media.id'), nullable=False)
 
     relation_category = db.relationship("RelationCategory", foreign_keys=[relation_category_id])
-    to_anime = db.relationship("Anime", foreign_keys=[to_anime_id])
-    anime = db.relationship("Anime", foreign_keys=[anime_id])
+    to_media = db.relationship("Media", foreign_keys=[to_media_id])
+    media = db.relationship("Media", foreign_keys=[media_id])
 
     def __repr__(self):
-        return f"{self.anime}"
+        return f"{self.media}"
 
 
 class Comment(db.Model):
@@ -127,7 +142,7 @@ class Comment(db.Model):
     grade = db.Column(db.Integer(), nullable=True, default=0)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'), nullable=False)
+    media_id = db.Column(db.Integer, db.ForeignKey('media.id'), nullable=False)
 
 
 class ListCategory(db.Model):
@@ -136,21 +151,21 @@ class ListCategory(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(length=40), nullable=False, unique=True)
 
-    user_anime_list = db.relationship("UserAnimeList", lazy='subquery', backref=db.backref('list_category', lazy=True))
+    user_media_list = db.relationship("UserMediaList", lazy='subquery', backref=db.backref('list_category', lazy=True))
 
     def __repr__(self):
         return self.name
 
 
-class UserAnimeList(db.Model):
-    __tablename__ = "user_anime_list"
+class UserMediaList(db.Model):
+    __tablename__ = "user_media_list"
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    anime_id = db.Column(db.Integer, db.ForeignKey('anime.id'), primary_key=True)
+    media_id = db.Column(db.Integer, db.ForeignKey('media.id'), primary_key=True)
     list_category_id = db.Column(db.Integer, db.ForeignKey('list_category.id'), primary_key=True)
 
     def __repr__(self):
-        return f"{self.user} {self.anime} {self.list_category}"
+        return f"{self.user} {self.media} {self.list_category}"
 
 
 def number_to_month(number):

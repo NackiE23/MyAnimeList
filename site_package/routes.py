@@ -11,7 +11,13 @@ from werkzeug.utils import secure_filename
 
 from site_package import app, db, parsing
 from site_package.forms import RegisterForm, LoginForm, AnimeModelForm
-from site_package.models import Anime, User, AnimeCategory, ListCategory, UserAnimeList
+from site_package.models import (
+    Media as Anime,
+    User,
+    MediaCategory as AnimeCategory,
+    ListCategory,
+    UserMediaList as UserAnimeList
+)
 
 
 def compare_category_with_ids(anime_categories: list, categories_ids: list) -> bool:
@@ -97,7 +103,7 @@ def add_anime_page():
     form = AnimeModelForm()
 
     if request.method == "POST" and form.validate_on_submit():
-        anime = Anime(name=form.name.data, release=form.release.data)
+        anime = Anime(name=form.name.data, release=form.release.data, type_id=1)
 
         if alter_name := form.alternative_name.data:
             anime.alternative_name = alter_name
@@ -145,7 +151,8 @@ def import_anime():
             alternative_name=data['alternative_name'],
             release=release,
             grade=grade,
-            description=data['description']
+            description=data['description'],
+            type_id=1
         )
         
         # Add categories

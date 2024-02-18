@@ -2,6 +2,7 @@ import os
 import uuid
 import datetime
 import random
+from typing import List
 
 import requests
 
@@ -14,14 +15,20 @@ from werkzeug.utils import secure_filename
 
 from site_package import app, db, parsing
 from site_package.forms import CategoryForm
-from site_package.models import Anime, AnimeCategory, Comment, RelationCategory, RelatedAnime
+from site_package.models import (
+    Media as Anime,
+    MediaCategory as AnimeCategory,
+    Comment,
+    RelationCategory,
+    RelatedMedia as RelatedAnime
+)
 
 
 @app.route('/new_home', methods=['GET', 'POST'])
 def new_home():
     pined_categories = ['Comedy', 'Adventure', 'Drama']
-    categories = list(AnimeCategory.query.filter(AnimeCategory.animes.any(), AnimeCategory.name.in_(pined_categories)))
-    categories += list(AnimeCategory.query.filter(AnimeCategory.animes.any(), ~AnimeCategory.name.in_(pined_categories)).order_by(func.random()).limit(5))
+    categories = list(AnimeCategory.query.filter(AnimeCategory.medias.any(), AnimeCategory.name.in_(pined_categories)))
+    categories += list(AnimeCategory.query.filter(AnimeCategory.medias.any(), ~AnimeCategory.name.in_(pined_categories)).order_by(func.random()).limit(5))
     category_animes = []
     
     for category in categories:
@@ -101,6 +108,7 @@ def category_info(cat_id):
         'animes': paginated_animes,
         'anime_count': animes.count(),
         'average_rating': round(animes.with_entities(func.avg(Anime.grade).label('average')).first()[0], 2),
+        'request_args': {k: v for k, v in request.args.items() if k != "page"}
     }
 
     return render_template('new/category.html', **context)
@@ -154,7 +162,8 @@ def new_import_anime_from_mal():
             alternative_name=data['alternative_name'],
             release=release,
             grade=grade,
-            description=data['description']
+            description=data['description'],
+            type_id=1
         )
         
         # Add categories
@@ -198,8 +207,8 @@ def new_import_anime_from_mal():
 @app.route('/new_anime/<int:anime_id>', methods=['GET', 'POST'])
 def new_anime_page(anime_id):
     anime = Anime.query.get_or_404(anime_id)
-    related_anime = RelatedAnime.query.filter_by(to_anime_id=anime_id)
-    comments = Comment.query.filter_by(anime_id=anime_id).order_by(Comment.created.desc()).all()
+    related_anime = RelatedAnime.query.filter_by(to_media_id=anime_id)
+    comments = Comment.query.filter_by(media_id=anime_id).order_by(Comment.created.desc()).all()
 
     context = {
         'title': anime.name,
@@ -212,7 +221,7 @@ def new_anime_page(anime_id):
         # Comment instance
         comment = Comment(
             user_id=current_user.id,
-            anime_id=anime.id,
+            media_id=anime.id,
             text=request.form.get('comment_text')
         )
 
@@ -234,7 +243,7 @@ def add_related_anime(anime_id):
     cur_anime = Anime.query.get_or_404(anime_id)
 
     # 'not_in' doesn't work in pythonanywhere.
-    # cur_related_anime = RelatedAnime.query.filter_by(to_anime_id=anime_id)
+    # cur_related_anime = RelatedAnime.query.filter_by(to_media_id=anime_id)
     # unused_anime = [anime_id] + [anime.anime.id for anime in cur_related_anime]
     # animes = Anime.query.filter(Anime.id.not_in(unused_anime))
 
