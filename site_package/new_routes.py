@@ -2,7 +2,6 @@ import os
 import uuid
 import datetime
 import random
-from typing import List
 
 import requests
 
@@ -15,24 +14,18 @@ from werkzeug.utils import secure_filename
 
 from site_package import app, db, parsing
 from site_package.forms import CategoryForm
-from site_package.models import (
-    Media as Anime,
-    MediaCategory as AnimeCategory,
-    Comment,
-    RelationCategory,
-    RelatedMedia as RelatedAnime
-)
+from site_package.models import Media, MediaCategory, Comment, RelationCategory, RelatedMedia
 
 
 @app.route('/new_home', methods=['GET', 'POST'])
 def new_home():
     pined_categories = ['Comedy', 'Adventure', 'Drama']
-    categories = list(AnimeCategory.query.filter(AnimeCategory.medias.any(), AnimeCategory.name.in_(pined_categories)))
-    categories += list(AnimeCategory.query.filter(AnimeCategory.medias.any(), ~AnimeCategory.name.in_(pined_categories)).order_by(func.random()).limit(5))
+    categories = list(MediaCategory.query.filter(MediaCategory.medias.any(), MediaCategory.name.in_(pined_categories)))
+    categories += list(MediaCategory.query.filter(MediaCategory.medias.any(), ~MediaCategory.name.in_(pined_categories)).order_by(func.random()).limit(5))
     category_animes = []
     
     for category in categories:
-        animes = list(Anime.query.filter(Anime.categories.any(AnimeCategory.id==category.id)).order_by(func.random()).limit(8))
+        animes = list(Media.query.filter(Media.categories.any(MediaCategory.id == category.id)).filter_by(type_id=1).order_by(func.random()).limit(8))
 
         if len(animes) < 8:
             animes = random.choices(animes, k=8)
@@ -52,18 +45,19 @@ def new_search_anime():
     page = int(request.args.get('page', 1))
     per_page = 50
 
-    animes = Anime.query.filter(or_(Anime.name.like('%' + request.args.get('name', '') + '%'), 
-                                    Anime.alternative_name.like('%' + request.args.get('name', '') + '%')))
+    animes = Media.query.filter(or_(Media.name.like('%' + request.args.get('name', '') + '%'),
+                                    Media.alternative_name.like('%' + request.args.get('name', '') + '%'))
+                                ).filter_by(type_id=1)
     if request.args.get('sort', '') == "grade_up":
-        animes = animes.order_by(Anime.grade.asc())
+        animes = animes.order_by(Media.grade.asc())
     else:
-        animes = animes.order_by(Anime.grade.desc())
+        animes = animes.order_by(Media.grade.desc())
     animes = animes.paginate(page=page, per_page=per_page, error_out=False)
 
     context = {
         'title': "Search",
         'animes': animes,
-        'request_args': {k:v for k, v in request.args.items() if k != "page"}
+        'request_args': {k: v for k, v in request.args.items() if k != "page"}
     }
 
     return render_template('new/search_anime.html', **context)
@@ -76,8 +70,10 @@ def new_top_list():
 
     context = {
         'title': "Top List",
-        'animes': Anime.query.order_by(Anime.grade.desc()).paginate(page=page, per_page=per_page, error_out=False),
-        'request_args': {k:v for k, v in request.args.items() if k != "page"}
+        'animes': Media.query.filter_by(type_id=1).order_by(Media.grade.desc()).paginate(
+            page=page, per_page=per_page, error_out=False
+        ),
+        'request_args': {k: v for k, v in request.args.items() if k != "page"}
     }
 
     return render_template('new/top_list.html', **context)
@@ -87,7 +83,7 @@ def new_top_list():
 def categories_list():
     context = {
         'title': 'Categories list',
-        'categories': AnimeCategory.query.all(),
+        'categories': MediaCategory.query.all(),
     }
 
     return render_template('new/categories_list.html', **context)
@@ -95,8 +91,8 @@ def categories_list():
 
 @app.route('/category/<int:cat_id>', methods=['GET'])
 def category_info(cat_id):
-    category = AnimeCategory.query.get_or_404(cat_id)
-    animes = Anime.query.order_by(Anime.grade.desc()).filter(Anime.categories.any(AnimeCategory.id==category.id))
+    category = MediaCategory.query.get_or_404(cat_id)
+    animes = Media.query.order_by(Media.grade.desc()).filter(Media.categories.any(MediaCategory.id==category.id)).filter_by(type_id=1)
 
     page = int(request.args.get('page', 1))
     per_page = 50
@@ -107,7 +103,7 @@ def category_info(cat_id):
         'category': category,
         'animes': paginated_animes,
         'anime_count': animes.count(),
-        'average_rating': round(animes.with_entities(func.avg(Anime.grade).label('average')).first()[0], 2),
+        'average_rating': round(animes.with_entities(func.avg(Media.grade).label('average')).first()[0], 2),
         'request_args': {k: v for k, v in request.args.items() if k != "page"}
     }
 
@@ -116,7 +112,7 @@ def category_info(cat_id):
 
 @app.route('/category_change/<int:cat_id>', methods=['GET', 'POST'])
 def category_change(cat_id):
-    category = AnimeCategory.query.get_or_404(cat_id)
+    category = MediaCategory.query.get_or_404(cat_id)
     form = CategoryForm(name=category.name, description=category.description)
 
     context = {
@@ -145,7 +141,7 @@ def new_import_anime_from_mal():
         'title': f'Import anime from MAL'
     }
 
-    if request.method == "POST":        
+    if request.method == "POST":
         anime_url = request.form['url']
         data = parsing.parse_mal_anime_page(anime_url)
 
@@ -157,7 +153,7 @@ def new_import_anime_from_mal():
             return render_template('new/import_anime.html', **context)
 
         # Main info
-        anime = Anime(
+        anime = Media(
             name=data['name'],
             alternative_name=data['alternative_name'],
             release=release,
@@ -165,13 +161,13 @@ def new_import_anime_from_mal():
             description=data['description'],
             type_id=1
         )
-        
+
         # Add categories
         for category_name in data['categories']:
-            if category:= AnimeCategory.query.filter_by(name=category_name).first():
+            if category := MediaCategory.query.filter_by(name=category_name).first():
                 pass
             else:
-                category = AnimeCategory(name=category_name)
+                category = MediaCategory(name=category_name)
                 db.session.add(category)
                 db.session.commit()
 
@@ -204,10 +200,10 @@ def new_import_anime_from_mal():
     return render_template('new/import_anime.html', **context)
 
 
-@app.route('/new_anime/<int:anime_id>', methods=['GET', 'POST'])
+@app.route('/media/<int:anime_id>', methods=['GET', 'POST'])
 def new_anime_page(anime_id):
-    anime = Anime.query.get_or_404(anime_id)
-    related_anime = RelatedAnime.query.filter_by(to_media_id=anime_id)
+    anime = Media.query.get_or_404(anime_id)
+    related_anime = RelatedMedia.query.filter_by(to_media_id=anime_id)
     comments = Comment.query.filter_by(media_id=anime_id).order_by(Comment.created.desc()).all()
 
     context = {
@@ -227,7 +223,7 @@ def new_anime_page(anime_id):
 
         if request.form.get('comment_grade_permission'):
             comment.grade = request.form.get('comment_grade')
-        
+
         # Comment commit
         db.session.add(comment)
         db.session.commit()
@@ -240,14 +236,14 @@ def new_anime_page(anime_id):
 
 @app.route('/related_anime/<int:anime_id>/add', methods=['GET', 'POST'])
 def add_related_anime(anime_id):
-    cur_anime = Anime.query.get_or_404(anime_id)
+    cur_anime = Media.query.get_or_404(anime_id)
 
     # 'not_in' doesn't work in pythonanywhere.
-    # cur_related_anime = RelatedAnime.query.filter_by(to_media_id=anime_id)
+    # cur_related_anime = RelatedMedia.query.filter_by(to_media_id=anime_id)
     # unused_anime = [anime_id] + [anime.anime.id for anime in cur_related_anime]
     # animes = Anime.query.filter(Anime.id.not_in(unused_anime))
 
-    animes = Anime.query.filter(Anime.id != anime_id)
+    animes = Media.query.filter(Media.id != anime_id)
     relation_categories = RelationCategory.query.all()
 
     if request.method == "POST":
@@ -256,10 +252,10 @@ def add_related_anime(anime_id):
 
         if related_anime_id and relation_category_id:
             # Create related anime instance
-            rel_anime = RelatedAnime(
-                to_anime_id = anime_id,
-                relation_category_id = relation_category_id,
-                anime_id = related_anime_id
+            rel_anime = RelatedMedia(
+                to_anime_id=anime_id,
+                relation_category_id=relation_category_id,
+                anime_id=related_anime_id
             )
 
             # Related anime commit
