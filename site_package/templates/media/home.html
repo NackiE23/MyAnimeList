@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<div class="container">
+    {% for category, animes in category_animes %}
+    <div class="preview_genre_list">
+        {% for anime in animes[:5] %}
+        <a class="preview_genre_list__item" href="{{ url_for('media_bp.anime_page', anime_id=anime.id) }}">
+            <img class="preview_genre_list__item_image" src="{{ anime.img }}" alt="#">
+            <p class="preview_genre_list__item_name">
+                {{ anime.name }}
+            </p>
+            <div class="preview_genre_list__item_grade">
+                [ {{ anime.grade }}/100 ]
+            </div>
+        </a>
+        {% endfor %}
+        <div class="preview_genre_list__item presentation">
+            <h1>{{ category.name }}</h1>
+            <p>
+                {% if category.description %}{{ category.description }}{% endif %}
+            </p>
+            <a href="{{ url_for('media_bp.category_info', cat_id=category.id) }}" class="preview_genre_list__item_link button">See more</a>
+
+        </div>
+        {% for anime in animes[5:8] %}
+        <a class="preview_genre_list__item" href="{{ url_for('media_bp.anime_page', anime_id=anime.id) }}">
+            <img class="preview_genre_list__item_image" src="{{ anime.img }}" alt="#">
+            <p class="preview_genre_list__item_name">
+                {{ anime.name }}
+            </p>
+            <div class="preview_genre_list__item_grade">
+                [ {{ anime.grade }}/100 ]
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

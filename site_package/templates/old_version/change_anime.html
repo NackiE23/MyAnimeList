@@ -1,0 +1,119 @@
+{% extends "old_version/base.html" %}
+
+{% block style %}
+<style>
+    .bg-secondary {
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+<div class="container">
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        {% if anime.img %}
+        <p>Image preview: <br>
+            <img src="{{ anime.img }}" id="preview-image" class="img-fluid" alt="Anime doesn`t have an image" style="max-width: 500px;">
+        </p>
+        {% else %}
+        <p>Image preview: <br>
+            <img src="" id="preview-image" class="img-fluid" alt="Anime doesn`t have an image" style="max-width: 500px;">
+        </p>
+        {% endif %}
+        {{ form.img.label(class="form-label") }}
+        {{ form.img(class="form-control bg-secondary", id="id_image") }}
+
+        {{ form.name.label(class="form-label") }}
+            {{ form.name(value=anime.name, class="form-control bg-secondary") }}
+        {{ form.alternative_name.label(class="form-label") }}
+            {{ form.alternative_name(value=anime.alternative_name, class="form-control bg-secondary") }}
+        {{ form.release.label(class="form-label") }}
+            {{ form.release(value=anime.release, class="form-control bg-secondary") }}
+        {{ form.description.label(class="form-label") }}
+            <textarea name="description" class="form-control bg-secondary" rows=6>{{ anime.description }}</textarea>
+        {{ form.grade.label(class="form-label") }}
+            {% if anime.grade %}
+                {{ form.grade(min=0, max=101, value=anime.grade, class="form-control bg-secondary") }}
+            {% else %}
+                {{ form.grade(value=0, min=0, max=101, class="form-control bg-secondary") }}
+            {% endif %}
+
+        <div class="container">
+            <br>
+            <div class="row">
+                <div class="col">
+                    <select name="all_categories" class="form-select bg-secondary" id="add_category">
+                        <option selected>Add category</option>
+                        {% for category in categories %}
+                            <option value="{{ category.name }}" data-category-id="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <select name="current_categories" class="form-select bg-secondary" id="remove_category">
+                        <option selected>Remove category</option>
+                        {% for category in anime.categories %}
+                            <option value="{{ category.name }}" data-category-id="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="form-control bg-secondary" id="anime_categories" name="categories" value="{{ anime.categories_to_text() }}" readonly>
+                    <input type="hidden" id="anime_id_categories" name="id_categories" value="{{ anime.categories_to_text_ids() }}">
+                </div>
+            </div>
+        </div>
+
+        <br>
+        {{ form.submit(value="Save changes", class="btn btn-secondary") }}
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $('form').on('change', '#id_image', function() {
+        var src = URL.createObjectURL(this.files[0]);
+        $('#preview-image').attr('src', src);
+    });
+
+    function normalizeSelects(){
+        $('#add_category').prop("selectedIndex", 0);
+        $('#remove_category').prop("selectedIndex", 0);
+    };
+
+	$('#add_category').on('change', function (e) {
+        var optionSelected = $("option:selected", this);
+        var valueSelected = this.value;
+        var idSelected = $("option:selected").attr('data-category-id');
+
+        optionSelected.remove().appendTo($('#remove_category'));
+        $('#anime_categories').val($('#anime_categories').val() + " " + valueSelected);
+        $('#anime_id_categories').val($('#anime_id_categories').val() + " " + idSelected);
+
+        normalizeSelects();
+    });
+
+
+	$('#remove_category').on('change', function (e) {
+        var optionSelected = $("option:selected", this);
+
+        optionSelected.remove().appendTo($('#add_category'));
+
+        $('#anime_categories').val("")
+        $('#anime_id_categories').val("")
+
+        $('#remove_category option:not(:first-child)').each(function() {
+            $('#anime_categories').val($('#anime_categories').val() + " " + this.value);
+            $('#anime_id_categories').val($('#anime_id_categories').val() + " " + $(this).attr('data-category-id'));
+        });
+
+        normalizeSelects();
+    });
+</script>
+{% endblock %}

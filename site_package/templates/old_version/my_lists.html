@@ -1,0 +1,56 @@
+{% extends "old_version/base.html" %}
+
+{% block content %}
+{{ super() }}
+<h1>{{ list }}</h1>
+<nav class="bg-dark navbar-dark">
+    <h1>My Lists</h1>
+
+    <ul class="navbar-nav nav justify-content-center flex-row mb-3" style="overflow-y: scroll;">
+        {% for category in list_categories %}
+            <li class="nav-item p-2">
+                {% if category.id == list_category.id %}
+                    <a class="nav-link active disabled">{{ category }}</a>
+                {% else %}
+                    <a class="nav-link" aria-current="page" href="?list_category_id={{category.id}}">{{ category }}</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</nav>
+
+{% for anime in animes %}
+{% set anime = anime.anime %}
+<div class="container">
+    <div class="anime">
+        <div class="row">
+            <h2>{{ anime.name }} <span class="badge bg-secondary">[{{ anime.grade }}/100]</span></h2>
+        </div>
+        <div class="row text-center p-1">
+            <ul class="list-group list-group-horizontal justify-content-center" style="overflow-y: scroll;">
+                {% for c in anime.categories %}
+                    <li class="list-group-item text-bg-secondary mb-3 me-2 py-1 px-3">{{ c }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                {% if anime.img %}
+                    <img src="{{ anime.img }}" class="img-fluid" alt="#">
+                {% else %}
+                    <img src="#" class="img-fluid" alt="#">
+                {% endif %}
+            </div>
+            <div class="col-8">
+                <h4>Release: {{ anime.normalize_release() }}</h4>
+                <p></p>
+                <p>Decription:<br>
+                    {{ anime.description }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<div class="container text_align_center">
+    <form method="POST" class="form">
+        <h1>Change category <span class="secondary_color">{{ category.name }}</span></h1>
+
+        {{ form.hidden_tag() }}
+
+        <p class="form__block">
+            {{ form.name.label(class="") }}
+            {{ form.name(placeholder="Name...") }}
+        </p>
+
+        <p class="form__block">
+            {{ form.description.label(class="") }}
+            {{ form.description(rows=6, maxlength=750, placeholder="Description...") }}
+        </p>
+
+        {{ form.submit(value="Save changes", class="form__submit button") }}
+    </form>
+</div>
+
+{% endblock %}

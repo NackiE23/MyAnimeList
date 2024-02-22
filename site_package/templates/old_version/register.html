@@ -1,0 +1,16 @@
+{% extends "old_version/base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.name.label }} {{ form.name(placeholder="Name") }} <br>
+    {{ form.email.label }} {{ form.email(placeholder="Email") }} <br>
+    {{ form.password1.label }} {{ form.password1(placeholder="Password") }} <br>
+    {{ form.password2.label }} {{ form.password2(placeholder="Confirm password") }} <br>
+    <br>
+    {{ form.submit }}
+</form>
+{% endblock %}

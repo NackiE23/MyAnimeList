@@ -1,87 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-      <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-      <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
-      {% block title -%}
-      <title>{{ title }}</title>
-      {% endblock %}
-      {% block style -%}
-      {% endblock %}
-   </head>
-   <body class="text-center" style="padding-bottom: 20px;">
-      {% block content -%}
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-light">
-         <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('anime_list') }}">OAL</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup" style="margin-right: 20px;">
-               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item">
-                     <a class="nav-link" href="{{ url_for('anime_list') }}">Index</a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link" href="{{ url_for('seasonal_page') }}">Seasonal</a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link" href="{{ url_for('add_anime_page') }}">Add anime</a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link" href="{{ url_for('import_anime') }}">Import anime from MAL</a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link" href="{{ url_for('new_top_list') }}">New Design</a>
-                  </li>
-                  <!-- <li class="nav-item">
-                     <a class="nav-link" href="{{ url_for('my_lists_page') }}">My Lists</a>
-                  </li> -->
-               </ul>
-            </div>
-            <div class="d-flex align-items-center">
-               <div class="md-form me-2">
-                  <form action="{{ url_for('anime_list') }}" method="GET">
-                     <input class="form-control bg-dark text-white border-bottom" type="text" name="name" placeholder="Search Anime" aria-label="Search Anime">
-                  </form>
-               </div>
-               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  {% if current_user.is_authenticated %}
-                  <li class="nav-item d-flex align-items-center">
-                     <span> Welcome, {{ current_user.name }} </span>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link" href="{{ url_for('logout_page') }}">Log Out</a>
-                  </li>
-                  {% else %}
-                  <li class="nav-item">
-                     <a class="nav-link" href="{{ url_for('login_page') }}">Log In</a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link" href="{{ url_for('register_page') }}">Register</a>
-                  </li>
-                  {% endif %}
-               </ul>
-            </div>
-         </div>
-      </nav>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/new_styles.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    {% block title -%}<title>OAL | {{ title }}</title>{% endblock %}
+    {% block style -%}{% endblock %}
+</head>
+<body>
 
-      {% for cat, msg in get_flashed_messages(True) %}
-      <div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
-         {{ msg }}
-         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-      {% endfor %}
-      {% endblock -%}
 
-      {% block footer -%}
-      {% endblock -%}
-      <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-      {% block script %}
-      {% endblock %}
-   </body>
+{% block content -%}
+<nav class="menu">
+    <div class="container">
+        <div class="menu__logo">
+            <a href="{{ url_for('media_bp.home') }}" class="inherit_color">OAL</a>
+        </div>
+    
+        <div class="menu__input">
+            <form action="{{ url_for('media_bp.search_anime') }}" class="menu__input_form">
+                <input type="search" placeholder="Search..." name="name">
+                <button type="submit" style="background: transparent url('{{ url_for('static', filename='images/base/loupe.png')}}') no-repeat center"></button>                
+            </form>
+        </div>
+    
+        <div class="menu__links">
+            <a href="{{ url_for('media_bp.home') }}" class="menu__links_link">Home</a>
+            <a href="{{ url_for('media_bp.top_list') }}" class="menu__links_link">Top</a>
+            <a href="{{ url_for('media_bp.import_anime_from_mal') }}" class="menu__links_link">Import anime from MAL</a>
+            <a href="{{ url_for('media_bp.categories_list') }}" class="menu__links_link">Categories list</a>
+            <a href="{{ url_for('old_version_bp.anime_list') }}" class="menu__links_link">Old one</a>
+        </div>
+    </div>
+</nav>
+
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="message {{ cat }}">
+    {{ msg }}
+    <span class="message_close button">Close</span>
+</div>
+{% endfor %}
+
+{% endblock -%}
+
+
+{% block footer -%}{% endblock -%}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+{% block script %}{% endblock %}
+</body>
 </html>
