@@ -10,7 +10,8 @@ from sqlalchemy import or_
 from werkzeug.utils import secure_filename
 
 from site_package import parsing
-from site_package.extensions import db, UPLOAD_FOLDER
+from site_package.decorators import admin_required
+from site_package.extensions import db
 from site_package.models.user import User
 from site_package.models.media import (
     Media as Anime,
@@ -30,6 +31,7 @@ def compare_category_with_ids(anime_categories: list, categories_ids: list) -> b
 
 
 @old_version_bp.route('/change_anime_grade', methods=['POST'])
+@admin_required
 def change_anime_grade():
     anime = Anime.query.get(request.form.get('anime_id'))
     anime.grade = request.form.get('grade')
@@ -104,6 +106,7 @@ def my_lists_page():
 
 
 @old_version_bp.route('/add_anime/', methods=['GET', 'POST'])
+@admin_required
 def add_anime_page():
     form = AnimeModelForm()
 
@@ -142,6 +145,7 @@ def add_anime_page():
 
 
 @old_version_bp.route('/import_anime/', methods=['GET', 'POST'])
+@admin_required
 def import_anime():
     if request.method == "POST":
         anime_url = request.form['url']
@@ -199,7 +203,8 @@ def import_anime():
 
 
 @old_version_bp.route('/change_anime/<int:anime_id>/', methods=['GET', 'POST'])
-def change_anime_page(anime_id):    
+@admin_required
+def change_anime_page(anime_id):
     anime = Anime.query.get_or_404(anime_id)
     available_categories = [c for c in AnimeCategory.query.all() if c not in anime.categories]
 
@@ -251,6 +256,7 @@ def change_anime_page(anime_id):
 
 
 @old_version_bp.route('/delete_anime/<int:anime_id>', methods=['POST'])
+@admin_required
 def delete_anime(anime_id):
     anime = Anime.query.get(anime_id)
     anime_name = anime.name

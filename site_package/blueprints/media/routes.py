@@ -11,6 +11,7 @@ from sqlalchemy.sql.expression import func
 from werkzeug.utils import secure_filename
 
 from site_package import parsing
+from site_package.decorators import admin_required
 from site_package.extensions import db
 from site_package.models.media import Media, MediaCategory, Comment, RelationCategory, RelatedMedia
 
@@ -20,8 +21,7 @@ from .forms import CategoryForm
 media_bp = Blueprint('media_bp', __name__)
 
 
-@media_bp.route('/', methods=['GET', 'POST'])
-@media_bp.route('/home', methods=['GET', 'POST'])
+@media_bp.route('/home', methods=['GET'])
 def home():
     pined_categories = ['Comedy', 'Adventure', 'Drama']
     categories = list(MediaCategory.query.filter(MediaCategory.medias.any(), MediaCategory.name.in_(pined_categories)))
@@ -120,6 +120,7 @@ def category_info(cat_id):
 
 
 @media_bp.route('/category_change/<int:cat_id>', methods=['GET', 'POST'])
+@admin_required
 def category_change(cat_id):
     category = MediaCategory.query.get_or_404(cat_id)
     form = CategoryForm(name=category.name, description=category.description)
@@ -145,6 +146,7 @@ def category_change(cat_id):
 
 
 @media_bp.route('/import_anime_from_mal', methods=['GET', 'POST'])
+@admin_required
 def import_anime_from_mal():
     context = {
         'title': f'Import anime from MAL'
@@ -246,6 +248,7 @@ def anime_page(anime_id):
 
 
 @media_bp.route('/related_anime/<int:anime_id>/add', methods=['GET', 'POST'])
+@admin_required
 def add_related_anime(anime_id):
     cur_anime = Media.query.get_or_404(anime_id)
 

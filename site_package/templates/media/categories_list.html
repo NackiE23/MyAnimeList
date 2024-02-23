@@ -10,8 +10,10 @@
     {% for category in categories %}
         {% if category %}
         <div class="categories_list__item">
-            {{ category }} 
-            <a href="{{ url_for('media_bp.category_change', cat_id=category.id) }}">Change</a>
+            {{ category }}
+            {% if current_user.is_admin %}
+                <a href="{{ url_for('media_bp.category_change', cat_id=category.id) }}">Change</a>
+            {% endif %}
         </div>
         {% endif %}
     {% endfor %}

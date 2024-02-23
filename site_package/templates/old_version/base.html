@@ -28,12 +28,14 @@
                   <li class="nav-item">
                      <a class="nav-link" href="{{ url_for('old_version_bp.seasonal_page') }}">Seasonal</a>
                   </li>
+                   {% if current_user.is_admin %}
                   <li class="nav-item">
                      <a class="nav-link" href="{{ url_for('old_version_bp.add_anime_page') }}">Add anime</a>
                   </li>
                   <li class="nav-item">
                      <a class="nav-link" href="{{ url_for('old_version_bp.import_anime') }}">Import anime from MAL</a>
                   </li>
+                   {% endif %}
                   <li class="nav-item">
                      <a class="nav-link" href="{{ url_for('media_bp.home') }}">New Design</a>
                   </li>

@@ -14,7 +14,7 @@ app = Flask(__name__, instance_path=os.path.dirname(os.path.abspath(__file__)))
 app.register_blueprint(old_version_bp, url_prefix="/old")
 app.register_blueprint(admin_bp, url_prefix="/admin")
 app.register_blueprint(user_bp, url_prefix="/user")
-app.register_blueprint(media_bp)
+app.register_blueprint(media_bp, url_prefix="/media")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///media.db'
 app.config['SECRET_KEY'] = 'jhvaslkjh21234hghgjs'
@@ -23,7 +23,7 @@ db.init_app(app)
 login_manager.init_app(app)
 bcrypt.init_app(app)
 
-from site_package import new_routes, error_handlers
+from site_package import routes, error_handlers
 
 # Create tables
 # with app.app_context():

@@ -29,7 +29,9 @@
         <div class="menu__links">
             <a href="{{ url_for('media_bp.home') }}" class="menu__links_link">Home</a>
             <a href="{{ url_for('media_bp.top_list') }}" class="menu__links_link">Top</a>
-            <a href="{{ url_for('media_bp.import_anime_from_mal') }}" class="menu__links_link">Import anime from MAL</a>
+            {% if current_user.is_admin %}
+                <a href="{{ url_for('media_bp.import_anime_from_mal') }}" class="menu__links_link">Import anime from MAL</a>
+            {% endif %}
             <a href="{{ url_for('media_bp.categories_list') }}" class="menu__links_link">Categories list</a>
             <a href="{{ url_for('old_version_bp.anime_list') }}" class="menu__links_link">Old one</a>
         </div>
