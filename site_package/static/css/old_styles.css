@@ -1,0 +1,35 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: #212121;
+    color: white;
+}
+
+.page-item .page-link {
+    background: #495057;
+    color: #ced4da;
+}
+.page-item.active .page-link,
+.page-item:hover .page-link {
+    color: #fff !important;
+    background: #212529 !important;
+    border-color: #fff !important;
+}
+
+.anime {
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid white;
+    transition: .3s;
+    background-color: #262626;
+}
+.anime:hover {
+    box-shadow: 0 1px 10px white;
+}
+.anime img {
+    max-width: 255px;
+    max-height: 302px;
+}

@@ -20,8 +20,8 @@ from site_package.models.media import (
     UserMediaList as UserAnimeList
 )
 
-from .forms import RegisterForm, LoginForm, AnimeModelForm
-
+from .forms import AnimeModelForm
+from ..user.forms import LoginForm, RegisterForm
 
 old_version_bp = Blueprint("old_version_bp", __name__)
 

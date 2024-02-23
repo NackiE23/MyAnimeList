@@ -91,7 +91,7 @@ def top_list():
 def categories_list():
     context = {
         'title': 'Categories list',
-        'categories': MediaCategory.query.all(),
+        'categories': MediaCategory.query.order_by(MediaCategory.name).all(),
     }
 
     return render_template('media/categories_list.html', **context)

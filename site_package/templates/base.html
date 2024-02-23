@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/new_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     {% block title -%}<title>OAL | {{ title }}</title>{% endblock %}
     {% block style -%}{% endblock %}
@@ -33,7 +33,14 @@
                 <a href="{{ url_for('media_bp.import_anime_from_mal') }}" class="menu__links_link">Import anime from MAL</a>
             {% endif %}
             <a href="{{ url_for('media_bp.categories_list') }}" class="menu__links_link">Categories list</a>
-            <a href="{{ url_for('old_version_bp.anime_list') }}" class="menu__links_link">Old one</a>
+            <a href="{{ url_for('old_version_bp.anime_list') }}" class="menu__links_link">Old version</a>
+            {% if current_user.is_authenticated %}
+                <span> Welcome, {{ current_user.name }} </span>
+                <a class="nav-link" href="{{ url_for('user_bp.logout') }}">Log Out</a>
+            {% else %}
+                <a class="menu__links_link" href="{{ url_for('user_bp.login_page') }}">Log In</a>
+                <a class="menu__links_link" href="{{ url_for('user_bp.register_page') }}">Register</a>
+            {% endif %}
         </div>
     </div>
 </nav>
@@ -49,7 +56,8 @@
 
 
 {% block footer -%}{% endblock -%}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 {% block script %}{% endblock %}
 </body>
 </html>

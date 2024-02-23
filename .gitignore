@@ -3,6 +3,4 @@ __pycache__/
 .pyc
 *.db
 venv
-site_package/static/uploads/*
-!site_package/static/uploads/avatars/
-!site_package/static/uploads/avatars/default.jpg
+site_package/static/uploads/
