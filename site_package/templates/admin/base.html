@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+    {{ super() }}
+
+    <div class="admin_block">
+        <h2 class="admin_title">Admin settings</h2>
+
+        <div class="admin_area">
+            <div class="admin_models">
+                {% for i in range(1, 4) %}
+                	<a href="#"><div class="admin_model {% if i == 2 %}active{% endif %}">Admin Model {{ i }}</div></a>
+                {% endfor %}
+            </div>
+
+            <div class="admin_details">
+                <div class="admin_model_list">
+                    <div class="admin_model_list_search">
+                        <label>
+                            <input type="text" placeholder="Type for a search">
+                        </label>
+                        <div id="submit_search">submit</div>
+                    </div>
+
+                    {% for i in range(1, 15) %}
+                        <div class="admin_model_item">
+                            Item {{ i }}
+                            <div class="admin_model_item_options">
+                                <a href="#" class="admin_model_item_option">change</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <a href="#" class="admin_model_option">Add item</a>
+                    <div class="admin_model_list_pages">
+                        {% for i in range(1, 5) %}
+                            <a href="#" class="admin_model_list_page {% if i == 1 %}active{% endif %}">{{ i }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,133 @@
+:root {
+    --admin-bg: #441c94;
+}
+
+.admin_block {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 40px 80px 40px;
+}
+.admin_block a {
+    color: inherit;
+}
+
+.admin_title {
+    margin: 10px 0;
+}
+
+.admin_area {
+    width: 100%;
+    display: flex;
+    border-radius: 10px;
+    background-color: var(--admin-bg);
+    border: 1px solid var(--secondary);
+}
+
+.admin_models, .admin_details {
+    padding: 10px 0;
+}
+.admin_models {
+    margin-right: 10px;
+    border-right: 1px solid var(--secondary);
+}
+.admin_model {
+    background: var(--secondary);
+    margin: 10px 0;
+    padding: 5px;
+    transition: .3s all;
+    cursor: pointer;
+}
+.admin_model:hover, .admin_model.active {
+    position: relative;
+    background: var(--admin-bg);
+    border: 1px solid var(--secondary);
+    border-left: none;
+    border-right: none;
+}
+.admin_model.active::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    background-color: var(--admin-bg);
+    top: 0;
+    right: -1px;
+}
+
+.admin_details {
+    width: 100%;
+}
+.admin_model_list {
+    padding: 0 10px;
+}
+.admin_model_item {
+    border: 1px solid var(--secondary);
+    padding: 5px 10px;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+}
+.admin_model_option {
+    display: block;
+    color: var(--white);
+    border: 1px solid var(--secondary);
+    margin-top: 15px;
+    padding: 5px 10px;
+    width: fit-content;
+    margin-left: auto;
+    transition: .3s all;
+}
+.admin_model_option:hover {
+    color: var(--secondary);
+    background: var(--white);
+}
+.admin_model_item_option {
+    color: var(--secondary) !important;
+    transition: .2s all;
+    padding-right: 10px;
+}
+.admin_model_item_option:last-child {
+    padding-right: 0;
+}
+.admin_model_item_option:hover {
+    color: var(--white) !important;
+}
+
+.admin_model_list_search {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.admin_model_list_search input {
+    padding: 5px 10px;
+    background: var(--white);
+    color: var(--secondary);
+    border: none;
+    border-radius: 5px;
+}
+.admin_model_list_search #submit_search {
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid var(--secondary);
+    transition: .3s all;
+}
+.admin_model_list_search #submit_search:hover {
+    color: var(--secondary);
+    background: var(--white);
+}
+
+.admin_model_list_pages {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+.admin_model_list_page {
+    margin: 0 10px;
+}
+.admin_model_list_page.active {
+    color: var(--secondary);
+}
