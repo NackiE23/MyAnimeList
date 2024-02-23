@@ -248,7 +248,6 @@ def anime_page(anime_id):
 
 
 @media_bp.route('/related_anime/<int:anime_id>/add', methods=['GET', 'POST'])
-@admin_required
 def add_related_anime(anime_id):
     cur_anime = Media.query.get_or_404(anime_id)
 
