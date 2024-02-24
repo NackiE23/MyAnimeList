@@ -12,11 +12,10 @@ from werkzeug.utils import secure_filename
 
 from site_package import parsing
 from site_package.decorators import admin_required
-from site_package.extensions import db
+from site_package.extensions import db, compare_category_with_ids
 from site_package.models.media import Media, MediaCategory, Comment, RelationCategory, RelatedMedia
 
-from .forms import CategoryForm
-
+from .forms import CategoryForm, MediaForm
 
 media_bp = Blueprint('media_bp', __name__)
 
@@ -207,7 +206,7 @@ def import_anime_from_mal():
         db.session.commit()
 
         flash(Markup(
-            f"Anime {anime.name} has been imported! <a href='{url_for('old_version_bp.change_anime_page', anime_id=anime.id)}'>Link here</a>"),
+            f"Anime {anime.name} has been imported! <a href='{url_for('media_bp.change_media', media_id=anime.id)}'>Link here</a>"),
               category="success")
 
     return render_template('media/import_anime.html', **context)
@@ -245,6 +244,58 @@ def anime_page(anime_id):
         return redirect(request.url)
 
     return render_template('media/anime.html', **context)
+
+
+@media_bp.route('/<int:media_id>/change', methods=['GET', 'POST'])
+def change_media(media_id):
+    media = Media.query.get_or_404(media_id)
+    form = MediaForm(**media.__dict__)
+
+    context = {
+        'title': f'Change {media.name}',
+        'media': media,
+        'categories': [c for c in MediaCategory.query.order_by('name').all() if c not in media.categories],
+        'form': form,
+    }
+
+    if request.method == "POST" and form.validate_on_submit():
+        if form.name.data and form.name.data != media.name:
+            media.name = form.name.data
+        if form.alternative_name.data and form.alternative_name.data != media.alternative_name:
+            media.alternative_name = form.alternative_name.data
+        if form.release.data and form.release.data != media.release:
+            media.release = form.release.data
+        if form.description.data and form.description.data != media.description:
+            media.description = form.description.data
+        if form.grade.data and form.grade.data != media.grade:
+            media.grade = form.grade.data
+        if img := form.img.data:
+            filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
+            folder_release = media.release.strftime('%Y/%m')
+
+            if not os.path.exists(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release)):
+                os.makedirs(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release))
+
+            img.save(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release, filename))
+            media.img = os.path.join(current_app.config['UPLOAD_FOLDER'][1:], folder_release, filename)
+
+        categories = request.form.get('id_categories', '').split()
+        if compare_category_with_ids(media.categories, categories):
+            category_objs = []
+            for category_id in categories:
+                category_objs.append(MediaCategory.query.get(category_id))
+            media.categories = category_objs
+
+        db.session.commit()
+
+        flash(f"Changes have been saved", category="success")
+
+        if request.args.get('redirect_to', ''):
+            return redirect(request.args.get('redirect_to'))
+        else:
+            return redirect(url_for('media_bp.anime_page', anime_id=media.id))
+
+    return render_template('media/media_change.html', **context)
 
 
 @media_bp.route('/related_anime/<int:anime_id>/add', methods=['GET', 'POST'])

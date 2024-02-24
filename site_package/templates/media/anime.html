@@ -25,6 +25,12 @@
         </div>
     </div>
 
+    {% if current_user.is_admin %}
+    <div class="admin">
+        <a class="button" href="{{ url_for('media_bp.change_media', media_id=anime.id) }}">Change Info</a>
+    </div>
+    {% endif %}
+
     <div class="related">
         <a class="related__button button" href="{{ url_for('media_bp.add_related_anime', anime_id=anime.id) }}">Add relation</a>
 

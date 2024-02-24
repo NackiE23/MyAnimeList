@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename
 
 from site_package import parsing
 from site_package.decorators import admin_required
-from site_package.extensions import db
+from site_package.extensions import db, compare_category_with_ids
 from site_package.models.user import User
 from site_package.models.media import (
     Media as Anime,
@@ -24,10 +24,6 @@ from .forms import AnimeModelForm
 from ..user.forms import LoginForm, RegisterForm
 
 old_version_bp = Blueprint("old_version_bp", __name__)
-
-
-def compare_category_with_ids(anime_categories: list, categories_ids: list) -> bool:
-    return len(anime_categories) != len(set([cat.id for cat in anime_categories] + categories_ids))
 
 
 @old_version_bp.route('/change_anime_grade', methods=['POST'])

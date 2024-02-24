@@ -182,6 +182,9 @@ body {
 
 
 /* FORMS */
+.form {
+    margin-bottom: 100px;
+}
 .form__block {
     margin: 15px 0;
     display: flex;
@@ -202,7 +205,22 @@ body {
 }
 
 .form__block textarea {
+    min-width: 370px;
     max-width: 100%;
+}
+
+.form__block .row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 5px;
+}
+.form__block .row:last-child {
+    min-width: 700px;
+    margin-bottom: 0;
+}
+.form__block .row:last-child .col,
+.form__block .row:last-child input {
+    width: 100%;
 }
 
 .form__submit {
@@ -340,6 +358,12 @@ body {
 
 .anime__info_item {
     padding: 5px 0;
+}
+
+.admin {
+    text-align: left;
+    padding: 20px;
+    margin: 20px 15px;
 }
 
 .related {

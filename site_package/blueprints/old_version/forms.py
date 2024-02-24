@@ -1,8 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, TextAreaField, DateField, FileField, PasswordField, SubmitField
-from wtforms.validators import Length, DataRequired, EqualTo, ValidationError, Email
-
-from site_package.models.user import User
+from wtforms import StringField, IntegerField, TextAreaField, DateField, FileField, SubmitField
+from wtforms.validators import DataRequired
 
 
 class AnimeModelForm(FlaskForm):
