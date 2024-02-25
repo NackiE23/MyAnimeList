@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, IntegerField, DateField, FileField
+from wtforms import StringField, TextAreaField, SubmitField, IntegerField, DateField, FileField, SelectField
 from wtforms.validators import DataRequired
+
+from site_package.models.media import MediaType
 
 
 class CategoryForm(FlaskForm):
@@ -10,6 +12,7 @@ class CategoryForm(FlaskForm):
 
 
 class MediaForm(FlaskForm):
+    type_id = SelectField(label="Media Type", coerce=int)
     name = StringField(label="Name", validators=[DataRequired()])
     alternative_name = StringField(label="Alternative name")
     description = TextAreaField(label="Description")
@@ -17,3 +20,7 @@ class MediaForm(FlaskForm):
     release = DateField(label="Release", validators=[DataRequired()])
     img = FileField(label="Image")
     submit = SubmitField(label="Save")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.type_id.choices = [(t.id, t.name) for t in MediaType.query.order_by('name').all()]

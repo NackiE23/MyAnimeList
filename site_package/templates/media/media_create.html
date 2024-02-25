@@ -5,19 +5,13 @@
 
 <div class="container text_align_center">
     <form method="POST" class="form" enctype="multipart/form-data">
-        <h1>Change <a href="{{ url_for('media_bp.anime_page', anime_id=media.id) }}" class="secondary_color">{{ media.name }}</a></h1>
+        <h1>{{ title }}</h1>
 
         {{ form.hidden_tag() }}
 
-        {% if media.img %}
-            <p>
-                <img src="{{ media.img }}" id="preview-image" class="img-fluid" alt="Media doesn`t have an image" style="max-width: 500px;">
-            </p>
-        {% else %}
-            <p>
-                <img src="" id="preview-image" class="img-fluid" alt="Media doesn`t have an image" style="max-width: 500px;">
-            </p>
-        {% endif %}
+        <p>
+            <img src="" id="preview-image" class="img-fluid" alt="Import image first" style="max-width: 500px;">
+        </p>
 
         <p class="form__block">
             {{ form.img.label(class="") }}
@@ -68,16 +62,13 @@
                 <div class="col">
                     <select name="current_categories" class="form-select bg-secondary" id="remove_category">
                         <option selected>Remove category</option>
-                        {% for category in media.categories %}
-                            <option value="{{ category.name }}" data-category-id="{{ category.id }}">{{ category.name }}</option>
-                        {% endfor %}
                     </select>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <input type="text" class="form-control bg-secondary" id="anime_categories" name="categories" value="{{ media.categories_to_text() }}" readonly>
-                    <input type="hidden" id="anime_id_categories" name="id_categories" value="{{ media.categories_to_text_ids() }}">
+                    <input type="text" class="form-control bg-secondary" id="anime_categories" name="categories" readonly>
+                    <input type="hidden" id="anime_id_categories" name="id_categories">
                 </div>
             </div>
         </div>
@@ -104,7 +95,7 @@
 	$('#add_category').on('change', function (e) {
         var optionSelected = $("option:selected", this);
         var valueSelected = this.value;
-        var idSelected = $("option:selected").attr('data-category-id');
+        var idSelected = optionSelected.data('category-id');
 
         optionSelected.remove().appendTo($('#remove_category'));
         $('#anime_categories').val($('#anime_categories').val() + " " + valueSelected);

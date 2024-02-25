@@ -16,7 +16,7 @@ class MediaType(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(length=255), nullable=False)
 
-    media = db.relationship("Media", back_populates="type", uselist=False, lazy='subquery')
+    media = db.relationship("Media", back_populates="type", lazy='subquery')
 
     def __repr__(self):
         return self.name

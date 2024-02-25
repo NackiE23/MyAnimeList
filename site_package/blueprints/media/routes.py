@@ -212,7 +212,7 @@ def import_anime_from_mal():
     return render_template('media/import_anime.html', **context)
 
 
-@media_bp.route('/media/<int:anime_id>', methods=['GET', 'POST'])
+@media_bp.route('/<int:anime_id>', methods=['GET', 'POST'])
 def anime_page(anime_id):
     anime = Media.query.get_or_404(anime_id)
     related_anime = RelatedMedia.query.filter_by(to_media_id=anime_id)
@@ -246,6 +246,47 @@ def anime_page(anime_id):
     return render_template('media/anime.html', **context)
 
 
+@media_bp.route('/create', methods=['GET', 'POST'])
+def create_media():
+    form = MediaForm()
+
+    context = {
+        'title': "Create Media",
+        'form': form,
+        'categories': [c for c in MediaCategory.query.order_by('name').all()],
+    }
+
+    if request.method == "POST" and form.validate_on_submit():
+        media = Media(name=form.name.data, release=form.release.data, type_id=form.type_id.data)
+
+        if alter_name := form.alternative_name.data:
+            media.alternative_name = alter_name
+        if description := form.description.data:
+            media.description = description
+        if grade := form.grade.data:
+            media.grade = grade
+        if img := form.img.data:
+            filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
+            folder_release = media.release.strftime('%Y/%m')
+
+            if not os.path.exists(
+                    os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release)):
+                os.makedirs(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release))
+
+            img.save(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release, filename))
+            media.img = os.path.join(current_app.config['UPLOAD_FOLDER'][1:], folder_release, filename)
+        if categories := request.form.get('id_categories', '').split():
+            for category_id in categories:
+                media.categories.append(MediaCategory.query.get(category_id))
+
+        db.session.add(media)
+        db.session.commit()
+
+        flash(Markup(f"Media {media.name} has been added! <a href='{ url_for('media_bp.change_media', media_id=media.id) }'>Link here</a>"), category="success")
+
+    return render_template('media/media_create.html', **context)
+
+
 @media_bp.route('/<int:media_id>/change', methods=['GET', 'POST'])
 def change_media(media_id):
     media = Media.query.get_or_404(media_id)
@@ -259,6 +300,8 @@ def change_media(media_id):
     }
 
     if request.method == "POST" and form.validate_on_submit():
+        if form.type_id.data and form.type_id.data != media.type_id:
+            media.type_id = form.type_id.data
         if form.name.data and form.name.data != media.name:
             media.name = form.name.data
         if form.alternative_name.data and form.alternative_name.data != media.alternative_name:
