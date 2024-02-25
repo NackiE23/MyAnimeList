@@ -12,15 +12,15 @@
 
         <div class="admin_area">
             <div class="admin_models">
-                {% for model, _ in models %}
-                	<a href="{{ url_for('admin_bp.model_info', model_name=model.__name__) }}"><div class="admin_model {% if current_model and model.id == current_model.0.id %}active{% endif %}">{{ model.__name__ }}</div></a>
+                {% for admin_model in admin.models %}
+                	<a href="{{ url_for('admin_bp.model_info', model_name=admin_model.model_name) }}"><div class="admin_model {% if current_model and admin_model.model.id == current_model.model.id %}active{% endif %}">{{ admin_model.model_name }}</div></a>
                 {% endfor %}
             </div>
 
             <div class="admin_details">
                 <div class="admin_model_list">
                     {% if current_model %}
-                        {% set model_items = current_model.0.query.order_by(current_model.1).all() %}
+                        {% set model_items = current_model.get_items() %}
                         <div class="admin_model_list_search">
                             <label>
                                 <input type="text" placeholder="Type for a search">
@@ -29,9 +29,9 @@
                         </div>
 
                         {% if model_items %}
-                            {% for i in current_model.0.query.order_by(current_model.1).all() %}
+                            {% for item in model_items %}
                                 <div class="admin_model_item">
-                                    {{ i }}
+                                    {{ item }}
                                     <div class="admin_model_item_options">
                                         <a href="#" class="admin_model_item_option">change</a>
                                     </div>
