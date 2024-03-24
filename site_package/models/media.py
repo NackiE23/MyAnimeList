@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from flask import url_for
+
 from site_package.extensions import db
 
 
@@ -66,6 +68,9 @@ class MediaCategory(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return url_for("media_bp.category_info", cat_id=self.id)
 
 
 class RelationCategory(db.Model):

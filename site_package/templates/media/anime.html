@@ -17,7 +17,16 @@
                 <p>{{ anime.alternative_name }}</p>
             {% endif %}
             <p class="anime__info_item">Release: <b>{{ anime.release }}</b></p>
-            <p class="anime__info_item">Categories: <b>{{ anime.categories }}</b></p>
+            <p class="anime__info_item">Categories:
+                <b>
+                    [
+                        {% for category in anime.categories %}
+                            <a href="{{ category.get_absolute_url() }}">{{ category.name }}</a>
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    ]
+                </b>
+            </p>
         </div>
 
         <div class="anime_block anime__description">
