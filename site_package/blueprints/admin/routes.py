@@ -1,40 +1,38 @@
-from flask import Blueprint, render_template, abort
+from flask import redirect, url_for
+from flask_admin import Admin, AdminIndexView
+from flask_admin.contrib.sqla import ModelView
+from flask_login import current_user
 
+from site_package.extensions import db
 from site_package.models.media import Media, MediaType, MediaCategory, RelatedMedia, RelationCategory
 from site_package.models.user import User
 
-from .control import Admin, AdminModel
 
-admin_bp = Blueprint('admin_bp', __name__)
-admin = Admin()
-admin.add_models([
-    AdminModel(User, 'name'),
-    AdminModel(Media, 'name'),
-    AdminModel(MediaType, 'name'),
-    AdminModel(MediaCategory, 'name'),
-    AdminModel(RelatedMedia, 'id'),
-    AdminModel(RelationCategory, 'name'),
-])
+class AccessMixin:
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('user_bp.login_page'))
 
 
-@admin_bp.route("/", methods=["GET"])
-def main():
-    context = {
-        "admin": admin,
-    }
-
-    return render_template("admin/base.html", **context)
+class CustomAdminIndexView(AccessMixin, AdminIndexView):
+    pass
 
 
-@admin_bp.route("/<model_name>", methods=["GET"])
-def model_info(model_name):
-    current_model = admin.get_model_by_name(model_name)
-    if not current_model:
-        abort(404)
+class AdminModelView(AccessMixin, ModelView):
+    pass
 
-    context = {
-        "admin": admin,
-        "current_model": current_model,
-    }
 
-    return render_template("admin/base.html", **context)
+class MediaAdminView(AdminModelView):
+    form_columns = ['name', 'alternative_name', 'release', 'description', 'grade', 'img', 'type', 'categories', 'user_list', 'comments']
+
+
+admin = Admin(name='admin', index_view=CustomAdminIndexView(), template_mode='bootstrap4')
+
+admin.add_view(AdminModelView(User, db.session))
+admin.add_view(MediaAdminView(Media, db.session))
+admin.add_view(AdminModelView(MediaType, db.session))
+admin.add_view(AdminModelView(MediaCategory, db.session))
+admin.add_view(AdminModelView(RelatedMedia, db.session))
+admin.add_view(AdminModelView(RelationCategory, db.session))
