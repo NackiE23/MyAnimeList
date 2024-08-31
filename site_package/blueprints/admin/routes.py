@@ -1,6 +1,7 @@
 from flask import redirect, url_for
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.menu import MenuLink
 from flask_login import current_user
 
 from site_package.extensions import db
@@ -36,3 +37,5 @@ admin.add_view(AdminModelView(MediaType, db.session))
 admin.add_view(AdminModelView(MediaCategory, db.session))
 admin.add_view(AdminModelView(RelatedMedia, db.session))
 admin.add_view(AdminModelView(RelationCategory, db.session))
+
+admin.add_link(MenuLink(name='Back to site', endpoint='media_bp.home'))

@@ -31,7 +31,7 @@ def home():
 
     for category in categories:
         animes = list(
-            Media.query.filter(Media.categories.any(MediaCategory.id == category.id)).filter_by(type_id=1).order_by(
+            Media.query.filter(Media.categories.any(MediaCategory.id == category.id)).order_by(
                 func.random()).limit(8))
 
         if len(animes) < 8:
@@ -54,7 +54,7 @@ def search_anime():
 
     animes = Media.query.filter(or_(Media.name.like('%' + request.args.get('name', '') + '%'),
                                     Media.alternative_name.like('%' + request.args.get('name', '') + '%'))
-                                ).filter_by(type_id=1)
+                                )
     if request.args.get('sort', '') == "grade_up":
         animes = animes.order_by(Media.grade.asc())
     else:
@@ -77,7 +77,7 @@ def top_list():
 
     context = {
         'title': "Top List",
-        'animes': Media.query.filter_by(type_id=1).order_by(Media.grade.desc()).paginate(
+        'animes': Media.query.order_by(Media.grade.desc()).paginate(
             page=page, per_page=per_page, error_out=False
         ),
         'request_args': {k: v for k, v in request.args.items() if k != "page"}
@@ -100,7 +100,7 @@ def categories_list():
 def category_info(cat_id):
     category = MediaCategory.query.get_or_404(cat_id)
     animes = Media.query.order_by(Media.grade.desc()).filter(
-        Media.categories.any(MediaCategory.id == category.id)).filter_by(type_id=1)
+        Media.categories.any(MediaCategory.id == category.id))
 
     page = int(request.args.get('page', 1))
     per_page = 50

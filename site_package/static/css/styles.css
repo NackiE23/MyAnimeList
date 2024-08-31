@@ -503,6 +503,12 @@ body {
     padding: 15px;
     color: inherit;
 }
+.anime_list__item img {
+    border: 1px solid silver;
+}
+.anime_list__item.manga img {
+    border: 1px solid orange;
+}
 
 .anime_list__item:hover > .anime_list__item_image {
     box-shadow: 0 0 18px var(--secondary);

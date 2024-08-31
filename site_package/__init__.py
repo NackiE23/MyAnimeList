@@ -13,7 +13,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///media.db'
 app.config['SECRET_KEY'] = 'jhvaslkjh21234hghgjs'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['FLASK_ADMIN_SWATCH'] = 'Superhero'
+app.config['FLASK_ADMIN_SWATCH'] = 'superhero'
 
 babel = Babel(app)
 
