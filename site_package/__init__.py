@@ -25,5 +25,5 @@ admin.init_app(app)
 from site_package import routes, error_handlers
 
 # Create tables
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()

@@ -42,6 +42,7 @@ class Media(db.Model):
                                  backref=db.backref('medias', lazy=True))
     user_list = db.relationship("UserMediaList", lazy='subquery', backref=db.backref('media', lazy=True))
     comments = db.relationship("Comment", lazy='subquery', backref=db.backref('media', lazy=True))
+    images = db.relationship("MediaImage", back_populates="media", lazy="subquery")
 
     def __repr__(self):
         return self.name
@@ -57,6 +58,20 @@ class Media(db.Model):
 
     def get_url(self):
         return f"/#media_{self.id}"
+
+
+class MediaImage(db.Model):
+    __tablename__ = "media_images"
+
+    id = db.Column(db.Integer(), primary_key=True)
+    media_id = db.Column(db.Integer(), db.ForeignKey("media.id"), nullable=False)
+    image_path = db.Column(db.String(), nullable=False)  # Path where the image is stored
+    description = db.Column(db.String(length=255), nullable=True)
+
+    media = db.relationship("Media", back_populates="images")
+
+    def __repr__(self):
+        return f"<MediaImage {self.image_path}> ({self.description})"
 
 
 class MediaCategory(db.Model):
