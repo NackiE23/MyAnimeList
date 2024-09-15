@@ -31,7 +31,7 @@
         </div>
 
         <div class="anime_block anime__description">
-            {{ anime.description }}
+            {{ anime.description | replace('\n', '<br>') | safe }}
         </div>
     </div>
 
