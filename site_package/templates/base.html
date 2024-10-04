@@ -8,6 +8,8 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     {% block title -%}<title>OAL | {{ title }}</title>{% endblock %}
     {% block style -%}{% endblock %}
+    <script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 <body>
 
@@ -57,8 +59,6 @@
 
 
 {% block footer -%}{% endblock -%}
-<script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 {% block script %}{% endblock %}
 </body>
 </html>
