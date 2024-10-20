@@ -74,12 +74,15 @@ def search_anime():
 def top_list():
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 50))
+    media_count = Media.query.count()
 
     context = {
         'title': "Top List",
         'animes': Media.query.order_by(Media.grade.desc()).paginate(
             page=page, per_page=per_page, error_out=False
         ),
+        'media_count': media_count,
+        'per_page': per_page,
         'request_args': {k: v for k, v in request.args.items() if k != "page"}
     }
 

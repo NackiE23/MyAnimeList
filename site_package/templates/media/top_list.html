@@ -8,27 +8,15 @@
 
     <div>
         Per page:
-        {% if 'per_page' in request_args %}
-            {% if request_args['per_page'] == '50' %}
-                50 |
-                <a href="{{ url_for('media_bp.top_list', per_page=100) }}">100</a> |
-                <a href="{{ url_for('media_bp.top_list', per_page=200) }}">200</a>
-            {% elif request_args['per_page'] == '100' %}
-                <a href="{{ url_for('media_bp.top_list', per_page=50) }}">50</a> |
-                100 |
-                <a href="{{ url_for('media_bp.top_list', per_page=200) }}">200</a>
-            {% elif request_args['per_page'] == '200' %}
-                <a href="{{ url_for('media_bp.top_list', per_page=50) }}">50</a> |
-                <a href="{{ url_for('media_bp.top_list', per_page=100) }}">100</a> |
-                200
+        {% set per_page_options = [50, 100, 200, media_count] %}
+        {% for option in per_page_options %}
+            {% if per_page == option %}
+                {{ option }}
             {% else %}
-                <a href="{{ url_for('media_bp.top_list', per_page=50) }}">50</a> |
-                <a href="{{ url_for('media_bp.top_list', per_page=100) }}">100</a> |
-                <a href="{{ url_for('media_bp.top_list', per_page=200) }}">200</a>
+                <a href="{{ url_for('media_bp.top_list', per_page=option) }}">{{ option }}</a>
             {% endif %}
-        {% else %}
-            50 | <a href="{{ url_for('media_bp.top_list', per_page=100) }}">100</a> | <a href="{{ url_for('media_bp.top_list', per_page=200) }}">200</a>
-        {% endif %}
+            {% if not loop.last %} | {% endif %}
+        {% endfor %}
     </div>
 
     {% include "media/parts/top_list_pages.html" %}
