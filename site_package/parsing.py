@@ -30,9 +30,16 @@ def parse_mal_anime_page(url):
     text = requests.get(url).text
     soup = BeautifulSoup(text, 'lxml')
 
+    content_wrapper = soup.find('div', id='contentWrapper')
+    is_manga = content_wrapper and content_wrapper.get('itemtype') == 'http://schema.org/Product'
+
     # Name/Alternative Name
-    name = soup.find('p', class_='title-english')
-    alternative_name = soup.find('h1', class_='title-name')
+    if is_manga:
+        name = soup.find('span', class_='title-english')
+        alternative_name = soup.find('span', itemprop='name').contents[0]
+    else:
+        name = soup.find('p', class_='title-english')
+        alternative_name = soup.find('h1', class_='title-name')
     
     if name and alternative_name:
         name = name.text
@@ -51,12 +58,14 @@ def parse_mal_anime_page(url):
         release = soup.find('span', string='Published:')
     if release:
         release = release.parent.text
+        release = re.sub(r'\s+', ' ', release)  # Remove extra spaces
         release = re.search(r'[A-Z][a-z]{2} \d{1,2}, \d{4}', release).group().replace(',', '')
     else:
         release = 'Jan 01 2000'
 
     # Description/Categories/Img Url
-    description = soup.find('p', itemprop='description').text
+    description = soup.find('p', itemprop='description') or soup.find('span', itemprop='description')
+    description = description.text if description else ''
     categories = [cat.text.strip() for cat in soup.find_all('span', itemprop='genre')]
     img_url = soup.select_one('.leftside > div:nth-child(1) > a:nth-child(1) > img:nth-child(1)').get('data-src', '#')
 
