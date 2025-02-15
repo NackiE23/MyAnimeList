@@ -35,6 +35,8 @@ class Media(db.Model):
     grade = db.Column(db.Integer(), nullable=True, default=0)
     img = db.Column(db.String(), default="/static/images/base/default.png", nullable=True)
 
+    added = db.Column(db.Date(), default=datetime.now)
+
     type_id = db.Column(db.Integer, db.ForeignKey("media_type.id"), nullable=False)
     type = db.relationship("MediaType", back_populates="media", lazy='subquery')
 

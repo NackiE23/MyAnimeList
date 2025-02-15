@@ -2,5 +2,7 @@ __pycache__/
 .idea
 .pyc
 *.db
+*_dump.sql
 venv
 site_package/static/uploads/
+static/uploads/
