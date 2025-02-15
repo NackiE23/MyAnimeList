@@ -193,6 +193,11 @@ body {
     font-weight: bold;
 }
 
+.form__block .wrapper_limitation {
+    width: 100%;
+    max-width: 350px;
+}
+
 .form__block input,
 .form__block select,
 .form__block textarea {
@@ -228,6 +233,51 @@ body {
     font-size: 18px;
     padding: 10px 15px;
     font-weight: bold;
+}
+
+
+/* Match Select2 with your input styles */
+.select2-container .select2-selection--single {
+    min-width: 350px;
+    height: 45px !important; /* Adjust height to match padding */
+    padding: 8px 10px; /* Only horizontal padding, vertical handled by height */
+    font-weight: bold;
+    color: var(--secondary);
+    border: var(--secondary-border);
+    border-radius: 5px;
+    display: flex;
+    align-items: center; /* Centers text vertically */
+}
+
+/* Style the dropdown arrow (removes extra padding issues) */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100%;
+    top: 0 !important;
+    right: 10px; /* Adjust arrow position */
+    display: flex;
+    align-items: center;
+}
+
+/* Ensure dropdown matches styling */
+.select2-dropdown {
+    border: var(--secondary-border);
+}
+
+/* Style dropdown options */
+.select2-results__option {
+    padding: 10px;
+    font-weight: bold;
+    color: var(--secondary);
+}
+
+/* Highlight effect on hover */
+.select2-results__option--highlighted {
+    background: var(--primary);
+    color: white;
+}
+
+.select2-selection__rendered {
+    color: var(--secondary) !important;
 }
 
 
@@ -375,10 +425,15 @@ body {
 .related_list {
     display: flex;
     margin: 20px 0;
+    overflow-x: auto;
 }
 
 .related_list__item {
     margin-right: 20px;
+}
+
+.related_list__item_label {
+    font-weight: bold;
 }
 
 .related_list__item_image {

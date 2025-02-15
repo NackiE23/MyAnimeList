@@ -10,6 +10,6 @@ def admin_required(f):
         if current_user.is_authenticated and current_user.is_admin:
             return f(*args, **kwargs)
         else:
-            flash("You need to be an admin to view this page.")
+            flash("You must be an admin to view this page.")
             return redirect(url_for('main_page'))
     return wrap

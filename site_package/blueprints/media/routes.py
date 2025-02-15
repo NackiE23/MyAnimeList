@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 from site_package import parsing
 from site_package.decorators import admin_required
 from site_package.extensions import db, compare_category_with_ids
-from site_package.models.media import Media, MediaCategory, Comment, RelationCategory, RelatedMedia
+from site_package.models.media import Media, MediaCategory, Comment, RelatedMedia, RelationCategoryEnum
 
 from .forms import CategoryForm, MediaForm
 
@@ -91,9 +91,12 @@ def top_list():
 
 @media_bp.route('/categories_list', methods=['GET'])
 def categories_list():
+    categories = MediaCategory.query.order_by(MediaCategory.name).all()
+
     context = {
         'title': 'Categories list',
-        'categories': MediaCategory.query.order_by(MediaCategory.name).all(),
+        'categories': categories,
+        'categories_count': len(categories)
     }
 
     return render_template('media/categories_list.html', **context)
@@ -217,14 +220,14 @@ def import_anime_from_mal():
 
 @media_bp.route('/<int:anime_id>', methods=['GET', 'POST'])
 def anime_page(anime_id):
-    anime = Media.query.get_or_404(anime_id)
-    related_anime = RelatedMedia.query.filter_by(to_media_id=anime_id)
+    media = Media.query.get_or_404(anime_id)
+    related_media = RelatedMedia.query.filter_by(to_media_id=anime_id).order_by(RelatedMedia.order).all()
     comments = Comment.query.filter_by(media_id=anime_id).order_by(Comment.created.desc()).all()
 
     context = {
-        'title': anime.name,
-        'anime': anime,
-        'related_anime': related_anime,
+        'title': media.name,
+        'media': media,
+        'related_media': related_media,
         'comments': comments
     }
 
@@ -232,7 +235,7 @@ def anime_page(anime_id):
         # Comment instance
         comment = Comment(
             user_id=current_user.id,
-            media_id=anime.id,
+            media_id=media.id,
             text=request.form.get('comment_text')
         )
 
@@ -250,6 +253,7 @@ def anime_page(anime_id):
 
 
 @media_bp.route('/create', methods=['GET', 'POST'])
+@admin_required
 def create_media():
     form = MediaForm()
 
@@ -291,6 +295,7 @@ def create_media():
 
 
 @media_bp.route('/<int:media_id>/change', methods=['GET', 'POST'])
+@admin_required
 def change_media(media_id):
     media = Media.query.get_or_404(media_id)
     form = MediaForm(**media.__dict__)
@@ -344,28 +349,29 @@ def change_media(media_id):
     return render_template('media/media_change.html', **context)
 
 
-@media_bp.route('/related_anime/<int:anime_id>/add', methods=['GET', 'POST'])
-def add_related_anime(anime_id):
-    cur_anime = Media.query.get_or_404(anime_id)
+@media_bp.route('/related_media/<int:media_id>/add', methods=['GET', 'POST'])
+@admin_required
+def add_related_anime(media_id):
+    cur_anime = Media.query.get_or_404(media_id)
 
     # 'not_in' doesn't work in pythonanywhere.
     # cur_related_anime = RelatedMedia.query.filter_by(to_media_id=anime_id)
     # unused_anime = [anime_id] + [anime.anime.id for anime in cur_related_anime]
     # animes = Anime.query.filter(Anime.id.not_in(unused_anime))
 
-    animes = Media.query.filter(Media.id != anime_id)
-    relation_categories = RelationCategory.query.all()
+    medias = Media.query.filter(Media.id != media_id)
+    relation_categories = RelationCategoryEnum.ordered_choices()
 
     if request.method == "POST":
         related_anime_id = request.form.get('related_anime_id')
-        relation_category_id = request.form.get('relation_category_id')
+        relation_category = request.form.get('relation_category')
 
-        if related_anime_id and relation_category_id:
+        if related_anime_id and relation_category:
             # Create related anime instance
             rel_anime = RelatedMedia(
-                to_anime_id=anime_id,
-                relation_category_id=relation_category_id,
-                anime_id=related_anime_id
+                to_media_id=media_id,
+                media_id=related_anime_id,
+                relation_category=RelationCategoryEnum(relation_category),
             )
 
             # Related anime commit
@@ -376,12 +382,12 @@ def add_related_anime(anime_id):
             flash(f"Related anime have been added", category="success")
 
             # Redirect to main anime page
-            return redirect(url_for('media_bp.new_anime_page', anime_id=anime_id))
+            return redirect(url_for('media_bp.anime_page', anime_id=media_id))
 
     context = {
         'title': f'Add related anime to {cur_anime.name}',
         'cur_anime': cur_anime,
-        'animes': animes,
+        'medias': medias,
         'relation_categories': relation_categories,
     }
 

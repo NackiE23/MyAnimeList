@@ -1,6 +1,8 @@
+import enum
 from datetime import datetime
 
 from flask import url_for
+from sqlalchemy import Enum
 
 from site_package.extensions import db
 
@@ -90,30 +92,58 @@ class MediaCategory(db.Model):
         return url_for("media_bp.category_info", cat_id=self.id)
 
 
-class RelationCategory(db.Model):
-    __tablename__ = "relation_category"
+class RelationCategoryEnum(enum.Enum):
+    # TODO: Make more flexible to not have to change the code when adding new categories
+    SIMILAR = "similar"
+    PREQUEL = "prequel"
+    SEQUEL = "sequel"
+    ALTERNATIVE_SETTING = "alternative_setting"
+    ALTERNATIVE_VERSION = "alternative_version"
+    SPIN_OFF = "spin-off"
+    SIDE_STORY = "side_story"
+    OTHER = "other"
 
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(), nullable=False, unique=True)
-    priority = db.Column(db.Integer(), nullable=False, unique=True)
+    @classmethod
+    def ordered_choices(cls):
+        return [
+            (cls.SIMILAR, "Similar"),
+            (cls.PREQUEL, "Prequel"),
+            (cls.SEQUEL, "Sequel"),
+            (cls.ALTERNATIVE_SETTING, "Alternative Setting"),
+            (cls.ALTERNATIVE_VERSION, "Alternative Version"),
+            (cls.SPIN_OFF, "Spin-off"),
+            (cls.SIDE_STORY, "Side Story"),
+            (cls.OTHER, "Other"),
+        ]
 
-    def __repr__(self):
-        return f'{self.name}'
+    @property
+    def label(self):
+        labels = {
+            "similar": "Similar",
+            "prequel": "Prequel",
+            "sequel": "Sequel",
+            "alternative_setting": "Alternative Setting",
+            "alternative_version": "Alternative Version",
+            "spin-off": "Spin-off",
+            "side_story": "Side Story",
+            "other": "Other",
+        }
+        return labels.get(self.value, "Unknown")
 
 
 class RelatedMedia(db.Model):
     __tablename__ = "related_media"
 
     id = db.Column(db.Integer(), primary_key=True)
-
-    relation_category_id = db.Column(db.Integer, db.ForeignKey('relation_category.id'), nullable=False)
     # for 'to_media' pinnes 'media'
     to_media_id = db.Column(db.Integer, db.ForeignKey('media.id'), nullable=False)
     media_id = db.Column(db.Integer, db.ForeignKey('media.id'), nullable=False)
 
-    relation_category = db.relationship("RelationCategory", foreign_keys=[relation_category_id])
+    relation_category = db.Column(Enum(RelationCategoryEnum), nullable=False)
     to_media = db.relationship("Media", foreign_keys=[to_media_id])
     media = db.relationship("Media", foreign_keys=[media_id])
+
+    order = db.Column(db.Integer(), nullable=True, default=0)
 
     def __repr__(self):
         return f"{self.media}"

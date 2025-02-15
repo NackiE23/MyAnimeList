@@ -4,12 +4,13 @@
 {{ super() }}
 
 <div class="container text_align_center">
-    <h1>Categories:</h1>
+    <h1>Categories ({{ categories_count }}):</h1>
     
     <div class="categories_list">
     {% for category in categories %}
         {% if category %}
         <div class="categories_list__item">
+            <a href="{{ category.get_absolute_url() }}">-></a>
             {{ category }}
             {% if current_user.is_admin %}
                 <a href="{{ url_for('media_bp.category_change', cat_id=category.id) }}">Change</a>

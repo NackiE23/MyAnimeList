@@ -7,56 +7,60 @@
     
     <div class="anime">
         <div class="anime_block">
-            <img class="anime__image" src="{{ anime.img }}" alt="#">
+            <img class="anime__image" src="{{ media.img }}" alt="#">
         </div>
 
         <div class="anime_block anime__info">
-            <b class="anime__grade">{{anime.grade}}</b><span class="anime__grade_max">/100</span>
-            <h2 class="anime__name">{{ anime.name }}</h2>
-            {% if anime.alternative_name != "None" and anime.alternative_name %}
-                <p>{{ anime.alternative_name }}</p>
+            <b class="anime__grade">{{media.grade}}</b><span class="anime__grade_max">/100</span>
+            <h2 class="anime__name">{{ media.name }}</h2>
+            {% if media.alternative_name != "None" and media.alternative_name %}
+                <p>{{ media.alternative_name }}</p>
             {% endif %}
-            <p class="anime__info_item">Type: <b>{{ anime.type }}</b></p>
-            <p class="anime__info_item">Release: <b>{{ anime.release }}</b></p>
+            <p class="anime__info_item">Type: <b>{{ media.type }}</b></p>
+            <p class="anime__info_item">Release: <b>{{ media.release }}</b></p>
             <p class="anime__info_item">Categories:
                 <b>
                     [
-                        {% for category in anime.categories %}
+                        {% for category in media.categories %}
                             <a href="{{ category.get_absolute_url() }}">{{ category.name }}</a>
                             {% if not loop.last %}, {% endif %}
                         {% endfor %}
                     ]
                 </b>
             </p>
-            <p class="anime__info_item">Added to OAL: <b>{% if anime.added %}{{ anime.added }}{% else %}Earlier than 2025-02-15 :'){% endif %}</b></p>
+            <p class="anime__info_item">Added to OAL: <b>{% if media.added %}{{ media.added }}{% else %}Earlier than 2025-02-15 :'){% endif %}</b></p>
         </div>
 
         <div class="anime_block anime__description">
-            {{ anime.description | replace('\n', '<br>') | safe }}
+            {{ media.description | replace('\n', '<br>') | safe }}
         </div>
     </div>
 
     {% if current_user.is_admin %}
     <div class="admin">
-        <a class="button" href="{{ url_for('media_bp.change_media', media_id=anime.id) }}">Change Info</a>
+        <a class="button" href="{{ url_for('media_bp.change_media', media_id=media.id) }}">Change Info</a>
     </div>
     {% endif %}
 
     <div class="related">
-        <a class="related__button button" href="{{ url_for('media_bp.add_related_anime', anime_id=anime.id) }}">Add relation</a>
+        {% if current_user.is_admin %}
+            <a class="related__button button" href="{{ url_for('media_bp.add_related_anime', media_id=media.id) }}">Add relation</a>
+        {% elif related_media %}
+            <h2 class="related__header">Related media:</h2>
+        {% endif %}
 
         <div class="related_list">
-            {% for rel_anime in related_anime %}
-                <a class="related_list__item" href="{{ url_for('media_bp.anime_page', anime_id=rel_anime.anime.id) }}">
-                    <img class="related_list__item_image" src="{{ rel_anime.anime.img }}" alt="#">
-                    <p class="related_list__item_name">
-                        {{ rel_anime.relation_category }}
+            {% for rel_media in related_media %}
+                <a class="related_list__item" href="{{ url_for('media_bp.anime_page', anime_id=rel_media.media.id) }}">
+                    <img class="related_list__item_image" src="{{ rel_media.media.img }}" alt="#">
+                    <p class="related_list__item_label">
+                        {{ rel_media.relation_category.label }}
                     </p>
                     <p class="related_list__item_name">
-                        {{ rel_anime.anime.name }}
+                        {{ rel_media.media.name }}
                     </p>
                     <div class="related_list__item_grade">
-                        [ {{ rel_anime.anime.grade }}/100 ]
+                        [ {{ rel_media.media.grade }}/100 ]
                     </div>
                 </a>
             {% endfor %}

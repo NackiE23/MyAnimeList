@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block style %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 {{ super() }}
 
@@ -8,48 +12,46 @@
         <h1>Create <span class="secondary_color">related anime</span> to <span class="secondary_color">{{ cur_anime.name }}</span></h1>
 
         <p class="form__block">
-            <input list="anime_list" id="choose_anime_input" name="realted_anime_id" placeholder="Choose anime" required>
-            <datalist id="anime_list">
-                {% for anime in animes %}
-                    <option value="{{ anime.name }}" data-anime-id="{{ anime.id }}">{{ anime.name }}</option>
-                {% endfor %}
-            </datalist>
+            <span class="wrapper_limitation">
+                <select id="choose_anime_select" name="related_anime_id" required>
+                    <option value="" disabled selected>Choose media</option>
+                    {% for media in medias %}
+                        <option value="{{ media.id }}">{{ media.name }}</option>
+                    {% endfor %}
+                </select>
+            </span>
         </p>
 
         <p class="form__block">
             <label for="relation_category">Relation category</label>
-            <select name="relation_category_id" id="relation_category">
-                {% for category in relation_categories %}
-                    <option value="{{ category.id }}">{{ category }}</option>
+            <select name="relation_category" id="relation_category">
+                {% for choice, label in relation_categories %}
+                    <option value="{{ choice.value }}">{{ label }}</option>
                 {% endfor %}
             </select>
         </p>
 
-        <input type="hidden" name="related_anime_id">
-        <input type="submit" id="submit_related_anime" class="form__submit button">        
+        <p class="form__block">
+            <label for="order">Order (0 -> ∞)</label>
+            <input id="order" type="number" name="order" value="0">
+        </p>
+
+        <input type="submit" id="submit_related_anime" class="form__submit button">
     </form>
 </div>
 
 {% endblock %}
 
 {% block script %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 
-    $('#choose_anime_input').on('input', function() {
-        var $input = $(this),
-            val = $input.val();
-            list = $input.attr('list'),
-            match = $('#'+list + ' option').filter(function() {
-                return ($(this).val() === val);
-            });
-
-        if(match.length > 0) {
-            $('#submit_related_anime').show();
-            $('input[name=related_anime_id]').val(match.data('anime-id'));
-        } else {
-            $('#submit_related_anime').hide();
-            $('input[name=related_anime_id]').val(null);
-        }
+    $(document).ready(function() {
+        $('#choose_anime_select').select2({
+            placeholder: "Choose media",
+            allowClear: true,  // Optional: allows clearing the selection
+            width: '100%'  // Adjust width to match input field
+        });
     });
 
 </script>

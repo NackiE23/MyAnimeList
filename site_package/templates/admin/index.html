@@ -1,0 +1,27 @@
+{% extends 'admin/master.html' %}
+
+{% block head %}
+<style>
+    .admin__block {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .admin__block_count {
+        font-size: 24px;
+    }
+
+    .admin__block_title {
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% for count in counts %}
+        <div class="admin__block">
+            <p class="admin__block_count"><span class="admin__block_title">{{ count.title }}</span>: {{ count.count }}</p>
+        </div>
+    {% endfor %}
+{% endblock %}

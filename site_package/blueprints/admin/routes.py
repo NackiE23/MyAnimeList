@@ -2,14 +2,14 @@ import os
 from datetime import datetime
 
 from flask import redirect, url_for, current_app
-from flask_admin import Admin, AdminIndexView
+from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import ImageUploadField
 from flask_admin.menu import MenuLink
 from flask_login import current_user
 
 from site_package.extensions import db
-from site_package.models.media import Media, MediaType, MediaCategory, RelatedMedia, RelationCategory, MediaImage
+from site_package.models.media import Media, MediaType, MediaCategory, RelatedMedia, MediaImage, Comment
 from site_package.models.user import User
 
 
@@ -22,7 +22,17 @@ class AccessMixin:
 
 
 class CustomAdminIndexView(AccessMixin, AdminIndexView):
-    pass
+    @expose('/')
+    def index(self):
+        counts = [
+            {'title': 'Users', 'count': User.query.count()},
+            {'title': 'Media', 'count': Media.query.count()},
+            {'title': 'Media Types', 'count': MediaType.query.count()},
+            {'title': 'Media Categories', 'count': MediaCategory.query.count()},
+            {'title': 'Related Media', 'count': RelatedMedia.query.count()},
+            {'title': 'Media Images', 'count': MediaImage.query.count()},
+        ]
+        return self.render('admin/index.html', counts=counts)
 
 
 class AdminModelView(AccessMixin, ModelView):
@@ -36,7 +46,14 @@ def get_upload_path():
     return os.path.join(current_app.config['UPLOAD_FOLDER'], year, month)
 
 
+class UserAdminView(AdminModelView):
+    form_columns = ['name', 'email', 'created', 'is_admin']
+    column_searchable_list = ['name', 'email']
+    column_filters = ['is_admin']
+
+
 class MediaImageView(AdminModelView):
+    column_searchable_list = ['media.name', 'media.alternative_name', 'description', 'image_path']
     # Customizing the form to use ImageUploadField for image uploads
     form_overrides = {
         'image_path': ImageUploadField
@@ -57,14 +74,38 @@ class MediaAdminView(AdminModelView):
     column_filters = ['type', 'categories']
 
 
+class CommentAdminView(AdminModelView):
+    form_columns = ['user', 'media', 'text', 'created']
+    column_searchable_list = ['text']
+    column_filters = ['user.name', 'user.email', 'media.name', 'media.alternative_name', 'created']
+
+
+class MediaTypeAdminView(AdminModelView):
+    form_columns = ['name']
+    column_searchable_list = ['name']
+    column_filters = ['name']
+
+
+class MediaCategoryAdminView(AdminModelView):
+    form_columns = ['name', 'description']
+    column_searchable_list = ['name']
+    column_filters = ['name']
+
+
+class RelatedMediaAdminView(AdminModelView):
+    form_columns = ['media', 'to_media', 'relation_category', 'order']
+    column_searchable_list = ['media.name', 'media.alternative_name', 'to_media.name', 'to_media.alternative_name']
+    column_filters = ['media.name', 'media.alternative_name', 'to_media.name', 'to_media.alternative_name', 'relation_category', 'order']
+
+
 admin = Admin(name='admin', index_view=CustomAdminIndexView(), template_mode='bootstrap4')
 
-admin.add_view(AdminModelView(User, db.session))
+admin.add_view(UserAdminView(User, db.session))
 admin.add_view(MediaAdminView(Media, db.session))
+admin.add_view(CommentAdminView(Comment, db.session))
 admin.add_view(MediaImageView(MediaImage, db.session))
-admin.add_view(AdminModelView(MediaType, db.session))
-admin.add_view(AdminModelView(MediaCategory, db.session))
-admin.add_view(AdminModelView(RelatedMedia, db.session))
-admin.add_view(AdminModelView(RelationCategory, db.session))
+admin.add_view(MediaTypeAdminView(MediaType, db.session))
+admin.add_view(MediaCategoryAdminView(MediaCategory, db.session))
+admin.add_view(RelatedMediaAdminView(RelatedMedia, db.session))
 
 admin.add_link(MenuLink(name='Back to site', endpoint='media_bp.home'))
