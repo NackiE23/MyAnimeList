@@ -53,6 +53,8 @@ class MediaImageView(AdminModelView):
 
 class MediaAdminView(AdminModelView):
     form_columns = ['name', 'alternative_name', 'release', 'description', 'grade', 'img', 'type', 'categories', 'user_list', 'comments', 'images', 'added']
+    column_searchable_list = ['name', 'alternative_name', 'description']
+    column_filters = ['type', 'categories']
 
 
 admin = Admin(name='admin', index_view=CustomAdminIndexView(), template_mode='bootstrap4')
