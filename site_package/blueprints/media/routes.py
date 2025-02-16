@@ -222,7 +222,7 @@ def import_anime_from_mal():
 def anime_page(anime_id):
     media = Media.query.get_or_404(anime_id)
     related_media = RelatedMedia.query.filter_by(to_media_id=anime_id).order_by(RelatedMedia.order).all()
-    gallery = MediaImage.query.filter_by(media_id=anime_id).all()
+    gallery = MediaImage.query.filter_by(media_id=anime_id).order_by(MediaImage.order).all()
     comments = Comment.query.filter_by(media_id=anime_id).order_by(Comment.created.desc()).all()
 
     context = {
@@ -373,7 +373,12 @@ def add_media_image(media_id):
 
         img.save(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release, filename))
 
-        media_image = MediaImage(media_id=media_id, image_path=os.path.join(current_app.config['UPLOAD_FOLDER'][1:], folder_release, filename), description=form.description.data)
+        media_image = MediaImage(
+            media_id=media_id,
+            description=form.description.data,
+            image_path=os.path.join(current_app.config['UPLOAD_FOLDER'][1:], folder_release, filename),
+            order=form.order.data,
+        )
         db.session.add(media_image)
         db.session.commit()
 

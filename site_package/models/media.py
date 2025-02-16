@@ -71,6 +71,7 @@ class MediaImage(db.Model):
     media_id = db.Column(db.Integer(), db.ForeignKey("media.id"), nullable=False)
     image_path = db.Column(db.String(), nullable=False)  # Path where the image is stored
     description = db.Column(db.String(length=255), nullable=True)
+    order = db.Column(db.Integer(), nullable=True, default=99)
 
     media = db.relationship("Media", back_populates="images")
 
@@ -143,7 +144,7 @@ class RelatedMedia(db.Model):
     to_media = db.relationship("Media", foreign_keys=[to_media_id])
     media = db.relationship("Media", foreign_keys=[media_id])
 
-    order = db.Column(db.Integer(), nullable=True, default=0)
+    order = db.Column(db.Integer(), nullable=True, default=99)
 
     def __repr__(self):
         return f"{self.media}"

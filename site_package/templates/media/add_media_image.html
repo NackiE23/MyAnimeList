@@ -19,6 +19,11 @@
             {{ form.description(placeholder="Description...", id="id_description") }}
         </p>
 
+        <p class="form__block">
+            {{ form.order.label(class="") }}
+            {{ form.order(placeholder="Order", id="id_order", value=99) }}
+        </p>
+
         {{ form.submit(class="form__submit button") }}
     </form>
 </div>

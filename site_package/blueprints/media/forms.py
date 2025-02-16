@@ -29,4 +29,5 @@ class MediaForm(FlaskForm):
 class MediaImageForm(FlaskForm):
     img = FileField(label="Image", validators=[DataRequired()])
     description = StringField(label="Description")
+    order = IntegerField(label="Order")
     submit = SubmitField(label="Save")
