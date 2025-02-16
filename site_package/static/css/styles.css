@@ -456,7 +456,7 @@ body {
 }
 
 .media_gallery__item img {
-    width: 250px;
+    width: auto;
     height: 150px;
     border-radius: 5px;
     transition: transform 0.3s ease;
