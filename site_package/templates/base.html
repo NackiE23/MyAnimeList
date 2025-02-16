@@ -10,6 +10,7 @@
     {% block style -%}{% endblock %}
     <script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block head -%}{% endblock %}
 </head>
 <body>
 
@@ -22,7 +23,7 @@
         </div>
     
         <div class="menu__input">
-            <form action="{{ url_for('media_bp.search_anime') }}" class="menu__input_form">
+            <form action="{{ url_for('media_bp.search_media') }}" class="menu__input_form">
                 <input type="search" placeholder="Search..." name="name">
                 <button type="submit" style="background: transparent url('{{ url_for('static', filename='images/base/loupe.png')}}') no-repeat center"></button>                
             </form>

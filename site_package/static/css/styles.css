@@ -9,6 +9,7 @@
     --gray: #afaeb3;
     --error-color: #f03329;
     --success-color: transparent;
+    --primary-border: 1px solid var(--gray);
     --secondary-border: 2px solid var(--secondary);
     --gray-border: 2px solid var(--gray);
 }
@@ -389,6 +390,10 @@ body {
     padding: 0 15px;
 }
 
+.anime__name_wrapper {
+    margin-bottom: 15px;
+}
+
 .anime__description {
     border-left: var(--gray-border);
 }
@@ -407,29 +412,109 @@ body {
 }
 
 .anime__info_item {
-    padding: 5px 0;
+    padding: 10px 5px;
+    border-bottom: var(--primary-border);
 }
 
 .admin {
     text-align: left;
-    padding: 20px;
     margin: 20px 15px;
 }
 
+.media_gallery {
+    text-align: center;
+    padding: 20px;
+    background: #111;
+    color: white;
+}
+
+.media_gallery__header {
+    margin: 15px 0 10px 0;
+    border-top: var(--primary-border);
+    padding-top: 15px;
+    text-align: left;
+}
+
+.media_gallery__container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.media_gallery__list {
+    display: flex;
+    overflow: hidden;
+    width: 100%; /* Adjust width as needed */
+    scroll-behavior: smooth;
+    white-space: nowrap;
+}
+
+.media_gallery__item {
+    flex: 0 0 auto;
+    margin: 0 5px;
+}
+
+.media_gallery__item img {
+    width: 250px;
+    height: 150px;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.media_gallery__item img:hover {
+    transform: scale(1.05);
+}
+
+/* Arrows */
+.media_gallery__arrow {
+    position: absolute;
+    top: 50%;
+    border-radius: 5px;
+    transform: translateY(-50%);
+    background: var(--secondary-transparent);
+    color: var(--white);
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.3s;
+}
+
+.media_gallery__arrow:hover {
+    background: var(--secondary);
+}
+
+.media_gallery__arrow--left {
+    left: 10px;
+    z-index: 10;
+}
+
+.media_gallery__arrow--right {
+    right: 10px;
+    z-index: 10;
+}
+
+
 .related {
     text-align: left;
-    margin: 20px 15px;
     padding: 20px;
+}
+
+.related__header {
+    margin: 15px 0 0 0;
+    border-top: var(--primary-border);
+    padding-top: 15px;
 }
 
 .related_list {
     display: flex;
-    margin: 20px 0;
+    gap: 10px;
     overflow-x: auto;
 }
 
 .related_list__item {
-    margin-right: 20px;
+    text-align: center;
 }
 
 .related_list__item_label {

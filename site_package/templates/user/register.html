@@ -3,14 +3,30 @@
 {% block content %}
 {{ super() }}
 
-<form method="POST">
-    {{ form.hidden_tag() }}
+<div class="register_page container text_align_center">
+    <form method="POST" class="form">
+        <h1>Sign Up new account</h1>
 
-    {{ form.name.label }} {{ form.name(placeholder="Name") }} <br>
-    {{ form.email.label }} {{ form.email(placeholder="Email") }} <br>
-    {{ form.password1.label }} {{ form.password1(placeholder="Password") }} <br>
-    {{ form.password2.label }} {{ form.password2(placeholder="Confirm password") }} <br>
-    <br>
-    {{ form.submit }}
-</form>
+        {{ form.hidden_tag() }}
+
+        <div class="form__block">
+            {{ form.name.label }}
+            {{ form.name(placeholder="Name") }}
+        </div>
+        <div class="form__block">
+            {{ form.email.label }}
+            {{ form.email(placeholder="Email") }}
+        </div>
+        <div class="form__block">
+            {{ form.password1.label }}
+            {{ form.password1(placeholder="Password") }}
+        </div>
+        <div class="form__block">
+            {{ form.password2.label }}
+            {{ form.password2(placeholder="Confirm password") }}
+        </div>
+
+        {{ form.submit(class="form__submit button") }}
+    </form>
+</div>
 {% endblock %}

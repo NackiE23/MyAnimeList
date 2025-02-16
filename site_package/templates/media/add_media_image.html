@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<div class="container text_align_center">
+    <form method="POST" class="form" enctype="multipart/form-data">
+        <h1>Add gallery image to <a href="{{ url_for('media_bp.anime_page', anime_id=media.id) }}" class="secondary_color">{{ media.name }}</a></h1>
+
+        {{ form.hidden_tag() }}
+
+        <p class="form__block">
+            {{ form.img.label(class="") }}
+            {{ form.img(placeholder="Image...", id="id_image", accept="image/*") }}
+        </p>
+
+        <p class="form__block">
+            {{ form.description.label(class="") }}
+            {{ form.description(placeholder="Description...", id="id_description") }}
+        </p>
+
+        {{ form.submit(class="form__submit button") }}
+    </form>
+</div>
+
+{% endblock %}

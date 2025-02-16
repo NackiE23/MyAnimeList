@@ -1,9 +1,9 @@
 <nav class="pages">
     {% if animes.has_prev %}
-        <a class="pages__page_link button" href="{{ url_for('media_bp.search_anime', **request_args) }}">
+        <a class="pages__page_link button" href="{{ url_for('media_bp.search_media', **request_args) }}">
             &laquo;
         </a>
-        <a class="pages__page_link button" href="{{ url_for('media_bp.search_anime', page=animes.prev_num, **request_args) }}">
+        <a class="pages__page_link button" href="{{ url_for('media_bp.search_media', page=animes.prev_num, **request_args) }}">
             &lsaquo;
         </a>
     {% else %}
@@ -14,7 +14,7 @@
     {% for page in animes.iter_pages() %}
         {% if page %}
             {% if page != animes.page %}
-                <a class="pages__page_link button" href="{{ url_for('media_bp.search_anime', page=page, **request_args) }}">
+                <a class="pages__page_link button" href="{{ url_for('media_bp.search_media', page=page, **request_args) }}">
                     {{ page }}
                 </a>
             {% else %}
@@ -30,10 +30,10 @@
     {% endfor %}
     
     {% if animes.has_next %}
-        <a class="pages__page_link button" href="{{ url_for('media_bp.search_anime', page=animes.next_num, **request_args) }}">
+        <a class="pages__page_link button" href="{{ url_for('media_bp.search_media', page=animes.next_num, **request_args) }}">
             &rsaquo;
         </a>
-        <a class="pages__page_link button" href="{{ url_for('media_bp.search_anime', page=animes.pages, **request_args) }}">
+        <a class="pages__page_link button" href="{{ url_for('media_bp.search_media', page=animes.pages, **request_args) }}">
             &raquo;
         </a>
     {% else %}

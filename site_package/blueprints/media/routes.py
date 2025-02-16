@@ -13,9 +13,9 @@ from werkzeug.utils import secure_filename
 from site_package import parsing
 from site_package.decorators import admin_required
 from site_package.extensions import db, compare_category_with_ids
-from site_package.models.media import Media, MediaCategory, Comment, RelatedMedia, RelationCategoryEnum
+from site_package.models.media import Media, MediaCategory, Comment, RelatedMedia, RelationCategoryEnum, MediaImage
 
-from .forms import CategoryForm, MediaForm
+from .forms import CategoryForm, MediaForm, MediaImageForm
 
 media_bp = Blueprint('media_bp', __name__)
 
@@ -47,27 +47,27 @@ def home():
     return render_template('media/home.html', **context)
 
 
-@media_bp.route('/search_anime', methods=['GET'])
-def search_anime():
+@media_bp.route('/search_media', methods=['GET'])
+def search_media():
     page = int(request.args.get('page', 1))
     per_page = 50
 
-    animes = Media.query.filter(or_(Media.name.like('%' + request.args.get('name', '') + '%'),
+    medias = Media.query.filter(or_(Media.name.like('%' + request.args.get('name', '') + '%'),
                                     Media.alternative_name.like('%' + request.args.get('name', '') + '%'))
                                 )
     if request.args.get('sort', '') == "grade_up":
-        animes = animes.order_by(Media.grade.asc())
+        medias = medias.order_by(Media.grade.asc())
     else:
-        animes = animes.order_by(Media.grade.desc())
-    animes = animes.paginate(page=page, per_page=per_page, error_out=False)
+        medias = medias.order_by(Media.grade.desc())
+    medias = medias.paginate(page=page, per_page=per_page, error_out=False)
 
     context = {
         'title': "Search",
-        'animes': animes,
+        'medias': medias,
         'request_args': {k: v for k, v in request.args.items() if k != "page"}
     }
 
-    return render_template('media/search_anime.html', **context)
+    return render_template('media/search_media.html', **context)
 
 
 @media_bp.route('/top_list', methods=['GET'])
@@ -222,13 +222,15 @@ def import_anime_from_mal():
 def anime_page(anime_id):
     media = Media.query.get_or_404(anime_id)
     related_media = RelatedMedia.query.filter_by(to_media_id=anime_id).order_by(RelatedMedia.order).all()
+    gallery = MediaImage.query.filter_by(media_id=anime_id).all()
     comments = Comment.query.filter_by(media_id=anime_id).order_by(Comment.created.desc()).all()
 
     context = {
         'title': media.name,
         'media': media,
         'related_media': related_media,
-        'comments': comments
+        'comments': comments,
+        'gallery': gallery,
     }
 
     if request.method == "POST":
@@ -347,6 +349,38 @@ def change_media(media_id):
             return redirect(url_for('media_bp.anime_page', anime_id=media.id))
 
     return render_template('media/media_change.html', **context)
+
+
+@media_bp.route('/<int:media_id>/add_image', methods=['GET', 'POST'])
+@admin_required
+def add_media_image(media_id):
+    media = Media.query.get_or_404(media_id)
+    form = MediaImageForm()
+
+    context = {
+        'title': f'Add image to {media.name}',
+        'media': media,
+        'form': form,
+    }
+
+    if request.method == "POST" and form.validate_on_submit():
+        img = form.img.data
+        filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
+        folder_release = media.release.strftime('%Y/%m')
+
+        if not os.path.exists(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release)):
+            os.makedirs(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release))
+
+        img.save(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release, filename))
+
+        media_image = MediaImage(media_id=media_id, image_path=os.path.join(current_app.config['UPLOAD_FOLDER'][1:], folder_release, filename), description=form.description.data)
+        db.session.add(media_image)
+        db.session.commit()
+
+        flash(f"Image has been added", category="success")
+        return redirect(url_for('media_bp.anime_page', anime_id=media.id))
+
+    return render_template('media/add_media_image.html', **context)
 
 
 @media_bp.route('/related_media/<int:media_id>/add', methods=['GET', 'POST'])

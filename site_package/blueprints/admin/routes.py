@@ -62,7 +62,7 @@ class MediaImageView(AdminModelView):
     form_args = {
         'image_path': {
             'label': 'Image',
-            'base_path': get_upload_path,  # Define the folder where images will be saved
+            'base_path': get_upload_path,  # TODO: Implement get_upload_path function
             'allow_overwrite': False
         }
     }

@@ -3,12 +3,21 @@
 {% block content %}
 {{ super() }}
 
-<form method="POST">
-    {{ form.hidden_tag() }}
+<div class="login_page container text_align_center">
+    <form method="POST" class="form">
+        <h1>Log In to your account</h1>
 
-    {{ form.email.label }} {{ form.email(placeholder="Email") }} <br>
-    {{ form.password.label }} {{ form.password(placeholder="Password") }} <br>
-    <br>
-    {{ form.submit }}
-</form>
+        {{ form.hidden_tag() }}
+
+        <p class="form__block">
+            {{ form.email(placeholder="Email") }}
+        </p>
+
+        <p class="form__block">
+            {{ form.password(placeholder="Password") }}
+        </p>
+
+        {{ form.submit(class="form__submit button") }}
+    </form>
+</div>
 {% endblock %}

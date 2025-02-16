@@ -24,3 +24,9 @@ class MediaForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.type_id.choices = [(t.id, t.name) for t in MediaType.query.order_by('name').all()]
+
+
+class MediaImageForm(FlaskForm):
+    img = FileField(label="Image", validators=[DataRequired()])
+    description = StringField(label="Description")
+    submit = SubmitField(label="Save")
