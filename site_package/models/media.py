@@ -2,7 +2,7 @@ import enum
 from datetime import datetime
 
 from flask import url_for
-from sqlalchemy import Enum
+from sqlalchemy import Enum, event
 
 from site_package.extensions import db
 
@@ -77,6 +77,14 @@ class MediaImage(db.Model):
 
     def __repr__(self):
         return f"<MediaImage {self.image_path}> ({self.description})"
+
+
+@event.listens_for(MediaImage, 'before_insert')
+@event.listens_for(MediaImage, 'before_update')
+def fix_image_path_before(mapper, connection, target):
+    """Ensure image_path starts with '/' before saving."""
+    if target.image_path and not target.image_path.startswith('/'):
+        target.image_path = f'/{target.image_path}'
 
 
 class MediaCategory(db.Model):

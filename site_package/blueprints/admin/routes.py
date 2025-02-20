@@ -8,7 +8,7 @@ from flask_admin.form import ImageUploadField
 from flask_admin.menu import MenuLink
 from flask_login import current_user
 
-from site_package.extensions import db
+from site_package.extensions import db, UPLOAD_FOLDER
 from site_package.models.media import Media, MediaType, MediaCategory, RelatedMedia, MediaImage, Comment
 from site_package.models.user import User
 
@@ -40,10 +40,16 @@ class AdminModelView(AccessMixin, ModelView):
 
 
 def get_upload_path():
+    return current_app.root_path
+
+
+def image_namegen(obj, file_data):
+    """Generate a relative file path to store in the database."""
     now = datetime.now()
     year = now.strftime('%Y')
     month = now.strftime('%m')
-    return os.path.join(current_app.config['UPLOAD_FOLDER'], year, month)
+    filename = file_data.filename
+    return os.path.join(current_app.config['UPLOAD_FOLDER'][2:], year, month, filename)  # Store relative path in DB
 
 
 class UserAdminView(AdminModelView):
@@ -62,7 +68,8 @@ class MediaImageView(AdminModelView):
     form_args = {
         'image_path': {
             'label': 'Image',
-            'base_path': get_upload_path,  # TODO: Implement get_upload_path function
+            'base_path': get_upload_path,
+            'namegen': image_namegen,
             'allow_overwrite': False
         }
     }
