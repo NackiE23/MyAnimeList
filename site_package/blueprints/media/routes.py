@@ -404,6 +404,7 @@ def add_related_anime(media_id):
     if request.method == "POST":
         related_anime_id = request.form.get('related_anime_id')
         relation_category = request.form.get('relation_category')
+        order = request.form.get('order')
 
         if related_anime_id and relation_category:
             # Create related anime instance
@@ -411,6 +412,7 @@ def add_related_anime(media_id):
                 to_media_id=media_id,
                 media_id=related_anime_id,
                 relation_category=RelationCategoryEnum(relation_category),
+                order=order
             )
 
             # Related anime commit
