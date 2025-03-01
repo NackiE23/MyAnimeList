@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, IntegerField, DateField, FileField, SelectField
+from wtforms import StringField, TextAreaField, SubmitField, IntegerField, DateField, FileField, SelectField, MultipleFileField
 from wtforms.validators import DataRequired
 
 from site_package.models.media import MediaType
@@ -27,7 +27,7 @@ class MediaForm(FlaskForm):
 
 
 class MediaImageForm(FlaskForm):
-    img = FileField(label="Image", validators=[DataRequired()])
+    imgs = MultipleFileField(label="Images")
     description = StringField(label="Description")
     order = IntegerField(label="Order")
     submit = SubmitField(label="Save")

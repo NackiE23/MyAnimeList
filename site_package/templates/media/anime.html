@@ -11,7 +11,7 @@
     {% if current_user.is_admin %}
     <div class="admin">
         <a class="button" href="{{ url_for('media_bp.change_media', media_id=media.id) }}">Change Info</a>
-        <a class="related__button button" href="{{ url_for('media_bp.add_media_image', media_id=media.id) }}">Add gallery image</a>
+        <a class="related__button button" href="{{ url_for('media_bp.add_media_images', media_id=media.id) }}">Add gallery images</a>
         <a class="related__button button" href="{{ url_for('media_bp.add_related_anime', media_id=media.id) }}">Add relation</a>
     </div>
     {% endif %}

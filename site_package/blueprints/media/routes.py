@@ -351,9 +351,9 @@ def change_media(media_id):
     return render_template('media/media_change.html', **context)
 
 
-@media_bp.route('/<int:media_id>/add_image', methods=['GET', 'POST'])
+@media_bp.route('/<int:media_id>/add_images', methods=['GET', 'POST'])
 @admin_required
-def add_media_image(media_id):
+def add_media_images(media_id):
     media = Media.query.get_or_404(media_id)
     form = MediaImageForm()
 
@@ -364,24 +364,25 @@ def add_media_image(media_id):
     }
 
     if request.method == "POST" and form.validate_on_submit():
-        img = form.img.data
-        filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
         folder_release = media.release.strftime('%Y/%m')
+        upload_folder = os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release)
 
-        if not os.path.exists(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release)):
-            os.makedirs(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release))
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder)
 
-        img.save(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release, filename))
+        for img in form.imgs.data:
+            filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
+            img.save(os.path.join(upload_folder, filename))
 
-        media_image = MediaImage(
-            media_id=media_id,
-            description=form.description.data,
-            image_path=os.path.join(current_app.config['UPLOAD_FOLDER'][1:], folder_release, filename),
-            order=form.order.data,
-        )
-        db.session.add(media_image)
+            media_image = MediaImage(
+                media_id=media_id,
+                description=form.description.data,
+                image_path=os.path.join(current_app.config['UPLOAD_FOLDER'][1:], folder_release, filename),
+                order=form.order.data,
+            )
+            db.session.add(media_image)
+
         db.session.commit()
-
         flash(f"Image has been added", category="success")
         return redirect(url_for('media_bp.anime_page', anime_id=media.id))
 
