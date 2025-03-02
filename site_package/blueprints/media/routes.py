@@ -3,6 +3,7 @@ import os
 import random
 import uuid
 
+import boto3
 import requests
 from flask import Blueprint, render_template, redirect, url_for, flash, request, Markup, current_app
 from flask_login import current_user
@@ -12,7 +13,7 @@ from werkzeug.utils import secure_filename
 
 from site_package import parsing
 from site_package.decorators import admin_required
-from site_package.extensions import db, compare_category_with_ids
+from site_package.extensions import db, compare_category_with_ids, s3
 from site_package.models.media import Media, MediaCategory, Comment, RelatedMedia, RelationCategoryEnum, MediaImage
 
 from .forms import CategoryForm, MediaForm, MediaImageForm
@@ -275,15 +276,14 @@ def create_media():
         if grade := form.grade.data:
             media.grade = grade
         if img := form.img.data:
-            filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
-            folder_release = media.release.strftime('%Y/%m')
+            # Save to S3
+            s3_path = f"{uuid.uuid4()}_{secure_filename(img.filename)}"
+            s3.upload_fileobj(
+                img, current_app.config['S3_BUCKET'], s3_path,
+                ExtraArgs={"ContentType": img.mimetype}
+            )
 
-            if not os.path.exists(
-                    os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release)):
-                os.makedirs(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release))
-
-            img.save(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release, filename))
-            media.img = os.path.join(current_app.config['UPLOAD_FOLDER'][1:], folder_release, filename)
+            media.img = f"{current_app.config['S3_DOMAIN']}/{s3_path}"
         if categories := request.form.get('id_categories', '').split():
             for category_id in categories:
                 media.categories.append(MediaCategory.query.get(category_id))
@@ -323,14 +323,14 @@ def change_media(media_id):
         if form.grade.data and form.grade.data != media.grade:
             media.grade = form.grade.data
         if img := form.img.data:
-            filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
-            folder_release = media.release.strftime('%Y/%m')
+            # Save to S3
+            s3_path = f"{uuid.uuid4()}_{secure_filename(img.filename)}"
+            s3.upload_fileobj(
+                img, current_app.config['S3_BUCKET'], s3_path,
+                ExtraArgs={"ContentType": img.mimetype}
+            )
 
-            if not os.path.exists(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release)):
-                os.makedirs(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release))
-
-            img.save(os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release, filename))
-            media.img = os.path.join(current_app.config['UPLOAD_FOLDER'][1:], folder_release, filename)
+            media.img = f"{current_app.config['S3_DOMAIN']}/{s3_path}"
 
         categories = request.form.get('id_categories', '').split()
         if compare_category_with_ids(media.categories, categories):
@@ -364,20 +364,21 @@ def add_media_images(media_id):
     }
 
     if request.method == "POST" and form.validate_on_submit():
-        folder_release = media.release.strftime('%Y/%m')
-        upload_folder = os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], folder_release)
-
-        if not os.path.exists(upload_folder):
-            os.makedirs(upload_folder)
-
         for img in form.imgs.data:
-            filename = str(uuid.uuid1()) + '_' + secure_filename(img.filename)
-            img.save(os.path.join(upload_folder, filename))
+            s3_path = f"{uuid.uuid4()}_{secure_filename(img.filename)}"
 
+            # Завантаження в S3
+            s3.upload_fileobj(
+                img, current_app.config['S3_BUCKET'], s3_path,
+                ExtraArgs={"ContentType": img.mimetype}
+            )
+
+            # Збереження URL в базі даних
+            image_url = f"{current_app.config['S3_DOMAIN']}/{s3_path}"
             media_image = MediaImage(
                 media_id=media_id,
                 description=form.description.data,
-                image_path=os.path.join(current_app.config['UPLOAD_FOLDER'][1:], folder_release, filename),
+                image_path=image_url,
                 order=form.order.data,
             )
             db.session.add(media_image)

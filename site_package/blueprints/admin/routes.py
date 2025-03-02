@@ -4,11 +4,10 @@ from datetime import datetime
 from flask import redirect, url_for, current_app
 from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
-from flask_admin.form import ImageUploadField
 from flask_admin.menu import MenuLink
 from flask_login import current_user
 
-from site_package.extensions import db, UPLOAD_FOLDER
+from site_package.extensions import db
 from site_package.models.media import Media, MediaType, MediaCategory, RelatedMedia, MediaImage, Comment
 from site_package.models.user import User
 
@@ -58,21 +57,9 @@ class UserAdminView(AdminModelView):
     column_filters = ['is_admin']
 
 
-class MediaImageView(AdminModelView):
+class MediaImageAdminView(AdminModelView):
     column_searchable_list = ['media.name', 'media.alternative_name', 'description', 'image_path']
-    # Customizing the form to use ImageUploadField for image uploads
-    form_overrides = {
-        'image_path': ImageUploadField
-    }
-
-    form_args = {
-        'image_path': {
-            'label': 'Image',
-            'base_path': get_upload_path,
-            'namegen': image_namegen,
-            'allow_overwrite': False
-        }
-    }
+    column_filters = ['media.name', 'media.alternative_name', 'description', 'order']
 
 
 class MediaAdminView(AdminModelView):
@@ -110,7 +97,7 @@ admin = Admin(name='admin', index_view=CustomAdminIndexView(), template_mode='bo
 admin.add_view(UserAdminView(User, db.session))
 admin.add_view(MediaAdminView(Media, db.session))
 admin.add_view(CommentAdminView(Comment, db.session))
-admin.add_view(MediaImageView(MediaImage, db.session))
+admin.add_view(MediaImageAdminView(MediaImage, db.session))
 admin.add_view(MediaTypeAdminView(MediaType, db.session))
 admin.add_view(MediaCategoryAdminView(MediaCategory, db.session))
 admin.add_view(RelatedMediaAdminView(RelatedMedia, db.session))

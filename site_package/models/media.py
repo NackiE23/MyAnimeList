@@ -82,8 +82,8 @@ class MediaImage(db.Model):
 @event.listens_for(MediaImage, 'before_insert')
 @event.listens_for(MediaImage, 'before_update')
 def fix_image_path_before(mapper, connection, target):
-    """Ensure image_path starts with '/' before saving."""
-    if target.image_path and not target.image_path.startswith('/'):
+    """Ensure image_path starts with '/' when it's local file before saving."""
+    if target.image_path and not target.image_path.startswith('/') and not target.image_path.startswith('http'):
         target.image_path = f'/{target.image_path}'
 
 
