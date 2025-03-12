@@ -94,7 +94,6 @@ class MediaCategory(db.Model):
 
 
 class RelationCategoryEnum(enum.Enum):
-    # TODO: Make more flexible to not have to change the code when adding new categories
     SIMILAR = "similar"
     PREQUEL = "prequel"
     SEQUEL = "sequel"
@@ -107,29 +106,13 @@ class RelationCategoryEnum(enum.Enum):
     @classmethod
     def ordered_choices(cls):
         return [
-            (cls.SIMILAR, "Similar"),
-            (cls.PREQUEL, "Prequel"),
-            (cls.SEQUEL, "Sequel"),
-            (cls.ALTERNATIVE_SETTING, "Alternative Setting"),
-            (cls.ALTERNATIVE_VERSION, "Alternative Version"),
-            (cls.SPIN_OFF, "Spin-off"),
-            (cls.SIDE_STORY, "Side Story"),
-            (cls.OTHER, "Other"),
+            (c.value, c.label.replace("_", " ").title())
+            for c in cls
         ]
 
     @property
     def label(self):
-        labels = {
-            "similar": "Similar",
-            "prequel": "Prequel",
-            "sequel": "Sequel",
-            "alternative_setting": "Alternative Setting",
-            "alternative_version": "Alternative Version",
-            "spin-off": "Spin-off",
-            "side_story": "Side Story",
-            "other": "Other",
-        }
-        return labels.get(self.value, "Unknown")
+        return self.value.replace("_", " ").title()
 
 
 class RelatedMedia(db.Model):
