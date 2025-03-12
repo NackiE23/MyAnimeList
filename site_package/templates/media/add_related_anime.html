@@ -26,7 +26,7 @@
             <label for="relation_category">Relation category</label>
             <select name="relation_category" id="relation_category">
                 {% for choice, label in relation_categories %}
-                    <option value="{{ choice.value }}">{{ label }}</option>
+                    <option value="{{ choice }}">{{ label }}</option>
                 {% endfor %}
             </select>
         </p>
