@@ -8,7 +8,7 @@ from flask_admin.menu import MenuLink
 from flask_login import current_user
 
 from site_package.extensions import db
-from site_package.models.media import Media, MediaType, MediaCategory, RelatedMedia, MediaImage, Comment
+from site_package.models.media import Media, MediaCategory, RelatedMedia, MediaImage, Comment
 from site_package.models.user import User
 
 
@@ -26,7 +26,6 @@ class CustomAdminIndexView(AccessMixin, AdminIndexView):
         counts = [
             {'title': 'Users', 'count': User.query.count()},
             {'title': 'Media', 'count': Media.query.count()},
-            {'title': 'Media Types', 'count': MediaType.query.count()},
             {'title': 'Media Categories', 'count': MediaCategory.query.count()},
             {'title': 'Related Media', 'count': RelatedMedia.query.count()},
             {'title': 'Media Images', 'count': MediaImage.query.count()},
@@ -98,7 +97,6 @@ admin.add_view(UserAdminView(User, db.session))
 admin.add_view(MediaAdminView(Media, db.session))
 admin.add_view(CommentAdminView(Comment, db.session))
 admin.add_view(MediaImageAdminView(MediaImage, db.session))
-admin.add_view(MediaTypeAdminView(MediaType, db.session))
 admin.add_view(MediaCategoryAdminView(MediaCategory, db.session))
 admin.add_view(RelatedMediaAdminView(RelatedMedia, db.session))
 

@@ -14,19 +14,7 @@ media_categories = db.Table(
 )
 
 
-class MediaType(db.Model):
-    __tablename__ = "media_type"
-
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(length=255), nullable=False)
-
-    media = db.relationship("Media", back_populates="type", lazy='subquery')
-
-    def __repr__(self):
-        return self.name
-
-
-class TypeEnum(enum.Enum):
+class MediaTypeEnum(enum.Enum):
     anime = 'anime'
     manga = 'manga'
     light_novel = 'light_novel'
@@ -42,13 +30,9 @@ class Media(db.Model):
     description = db.Column(db.String(length=1024), nullable=True)
     grade = db.Column(db.Integer(), nullable=True, default=0)
     img = db.Column(db.String(), default="/static/images/base/default.png", nullable=True)
+    type = db.Column(Enum(MediaTypeEnum), nullable=False)
 
     added = db.Column(db.Date(), default=datetime.now)
-
-    type_id = db.Column(db.Integer, db.ForeignKey("media_type.id"), nullable=False)
-    type = db.relationship("MediaType", back_populates="media", lazy='subquery')
-    # TODO: Replace `type` with Enum
-    # media_choice = db.Column(Enum(TypeEnum), nullable=True)
 
     categories = db.relationship("MediaCategory", secondary=media_categories, lazy='subquery',
                                  backref=db.backref('medias', lazy=True))

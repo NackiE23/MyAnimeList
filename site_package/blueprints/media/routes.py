@@ -14,7 +14,7 @@ from werkzeug.utils import secure_filename
 from site_package import parsing
 from site_package.decorators import admin_required
 from site_package.extensions import db, compare_category_with_ids, s3
-from site_package.models.media import Media, MediaCategory, Comment, RelatedMedia, RelationCategoryEnum, MediaImage
+from site_package.models.media import Media, MediaCategory, Comment, RelatedMedia, RelationCategoryEnum, MediaImage, MediaTypeEnum
 
 from .forms import CategoryForm, MediaForm, MediaImageForm
 
@@ -176,7 +176,7 @@ def import_anime_from_mal():
             release=release,
             grade=grade,
             description=data['description'],
-            type_id=1
+            type=MediaTypeEnum.anime.value
         )
 
         # Add categories
@@ -267,7 +267,7 @@ def create_media():
     }
 
     if request.method == "POST" and form.validate_on_submit():
-        media = Media(name=form.name.data, release=form.release.data, type_id=form.type_id.data)
+        media = Media(name=form.name.data, release=form.release.data, type=form.type.data)
 
         if alter_name := form.alternative_name.data:
             media.alternative_name = alter_name
@@ -310,8 +310,8 @@ def change_media(media_id):
     }
 
     if request.method == "POST" and form.validate_on_submit():
-        if form.type_id.data and form.type_id.data != media.type_id:
-            media.type_id = form.type_id.data
+        if form.type.data and form.type.data != media.type:
+            media.type = form.type.data
         if form.name.data and form.name.data != media.name:
             media.name = form.name.data
         if form.alternative_name.data and form.alternative_name.data != media.alternative_name:

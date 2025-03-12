@@ -17,7 +17,7 @@ from site_package.models.media import (
     Media as Anime,
     MediaCategory as AnimeCategory,
     ListCategory,
-    UserMediaList as UserAnimeList
+    UserMediaList as UserAnimeList, MediaTypeEnum
 )
 
 from .forms import AnimeModelForm
@@ -107,7 +107,7 @@ def add_anime_page():
     form = AnimeModelForm()
 
     if request.method == "POST" and form.validate_on_submit():
-        anime = Anime(name=form.name.data, release=form.release.data, type_id=1)
+        anime = Anime(name=form.name.data, release=form.release.data, type=MediaTypeEnum.anime.value)
 
         if alter_name := form.alternative_name.data:
             anime.alternative_name = alter_name
@@ -157,7 +157,7 @@ def import_anime():
             release=release,
             grade=grade,
             description=data['description'],
-            type_id=1
+            type=MediaTypeEnum.anime.value
         )
         
         # Add categories
