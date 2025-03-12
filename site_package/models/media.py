@@ -26,6 +26,12 @@ class MediaType(db.Model):
         return self.name
 
 
+class TypeEnum(enum.Enum):
+    anime = 'anime'
+    manga = 'manga'
+    light_novel = 'light_novel'
+
+
 class Media(db.Model):
     __tablename__ = "media"
 
@@ -41,6 +47,8 @@ class Media(db.Model):
 
     type_id = db.Column(db.Integer, db.ForeignKey("media_type.id"), nullable=False)
     type = db.relationship("MediaType", back_populates="media", lazy='subquery')
+    # TODO: Replace `type` with Enum
+    # media_choice = db.Column(Enum(TypeEnum), nullable=True)
 
     categories = db.relationship("MediaCategory", secondary=media_categories, lazy='subquery',
                                  backref=db.backref('medias', lazy=True))
