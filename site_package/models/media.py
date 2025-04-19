@@ -101,6 +101,7 @@ class RelationCategoryEnum(enum.Enum):
     ALTERNATIVE_VERSION = "alternative_version"
     SPIN_OFF = "spin-off"
     SIDE_STORY = "side_story"
+    ADAPTATION = "adaptation"
     OTHER = "other"
 
     @classmethod

@@ -300,7 +300,14 @@ def create_media():
 @admin_required
 def change_media(media_id):
     media = Media.query.get_or_404(media_id)
-    form = MediaForm(**media.__dict__)
+    form = MediaForm(
+        type=media.type.value,
+        name=media.name,
+        alternative_name=media.alternative_name,
+        description=media.description,
+        grade=media.grade,
+        release=media.release
+    )
 
     context = {
         'title': f'Change {media.name}',
