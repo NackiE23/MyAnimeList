@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, IntegerField, DateField, FileField, SelectField, MultipleFileField
+from wtforms import StringField, TextAreaField, SubmitField, IntegerField, DateField, FileField, SelectField, MultipleFileField, BooleanField
 from wtforms.validators import DataRequired
 
 from site_package.models.media import MediaTypeEnum
@@ -19,6 +19,7 @@ class MediaForm(FlaskForm):
     grade = IntegerField(label="Grade")
     release = DateField(label="Release", validators=[DataRequired()])
     img = FileField(label="Image")
+    show_in_top_list = BooleanField(label="Show in Top List", default=True)
     submit = SubmitField(label="Save")
 
     def __init__(self, *args, **kwargs):

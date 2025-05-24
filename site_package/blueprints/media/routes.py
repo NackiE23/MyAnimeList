@@ -75,11 +75,12 @@ def search_media():
 def top_list():
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 50))
-    media_count = Media.query.count()
+    media = Media.query.filter_by(show_in_top_list=True)
+    media_count = media.count()
 
     context = {
         'title': "Top List",
-        'animes': Media.query.order_by(Media.grade.desc()).paginate(
+        'animes': media.order_by(Media.grade.desc()).paginate(
             page=page, per_page=per_page, error_out=False
         ),
         'media_count': media_count,
@@ -164,6 +165,7 @@ def import_anime_from_mal():
 
         release = datetime.datetime.strptime(data['release'], '%b %d %Y').date()
         grade = int(request.form['grade'])
+        show_in_top_list = request.form.get('show_in_top_list', 'off') == 'on'
 
         if not 0 <= grade <= 100:
             flash('Grade', category='danger')
@@ -176,7 +178,8 @@ def import_anime_from_mal():
             release=release,
             grade=grade,
             description=data['description'],
-            type=MediaTypeEnum.anime.value
+            type=MediaTypeEnum.anime.value,
+            show_in_top_list=show_in_top_list,
         )
 
         # Add categories
@@ -306,7 +309,8 @@ def change_media(media_id):
         alternative_name=media.alternative_name,
         description=media.description,
         grade=media.grade,
-        release=media.release
+        release=media.release,
+        show_in_top_list=media.show_in_top_list,
     )
 
     context = {
@@ -329,6 +333,8 @@ def change_media(media_id):
             media.description = form.description.data
         if form.grade.data and form.grade.data != media.grade:
             media.grade = form.grade.data
+        if form.show_in_top_list.data is not None and form.show_in_top_list.data != media.show_in_top_list:
+            media.show_in_top_list = form.show_in_top_list.data
         if img := form.img.data:
             # Save to S3
             s3_path = f"{uuid.uuid4()}_{secure_filename(img.filename)}"

@@ -25,13 +25,14 @@ class Media(db.Model):
     __tablename__ = "media"
 
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(length=60), nullable=False)
-    alternative_name = db.Column(db.String(length=60), nullable=True)
+    name = db.Column(db.String(length=255), nullable=False)
+    alternative_name = db.Column(db.String(length=255), nullable=True)
     release = db.Column(db.Date(), nullable=False)
     description = db.Column(db.String(length=1024), nullable=True)
     grade = db.Column(db.Integer(), nullable=True, default=0)
     img = db.Column(db.String(), default="/static/images/base/default.png", nullable=True)
     type = db.Column(Enum(MediaTypeEnum), nullable=False)
+    show_in_top_list = db.Column(db.Boolean(), default=True)
 
     added = db.Column(db.Date(), default=datetime.now)
 

@@ -62,7 +62,7 @@ class MediaImageAdminView(AdminModelView):
 
 
 class MediaAdminView(AdminModelView):
-    form_columns = ['name', 'alternative_name', 'release', 'description', 'grade', 'img', 'type', 'categories', 'user_list', 'comments', 'images', 'added']
+    form_columns = ['name', 'alternative_name', 'release', 'description', 'grade', 'img', 'type', 'categories', 'user_list', 'comments', 'images', 'show_in_top_list', 'added']
     column_searchable_list = ['name', 'alternative_name', 'description']
     column_filters = ['type', 'categories']
 
