@@ -4,7 +4,7 @@
 {{ super() }}
 
 <div class="container text_align_center">
-    <h1>Top Anime</h1>
+    <h1>Top Media{% if media_type %} ({{ media_type }}){% endif %}</h1>
 
     <div>
         Per page:
@@ -22,7 +22,7 @@
     {% include "media/parts/top_list_pages.html" %}
 
     <div class="anime_list">
-    {% for anime in animes.items %}
+    {% for anime in medias.items %}
         {% include 'media/parts/media_link.html' %}
     {% endfor %}
     </div>

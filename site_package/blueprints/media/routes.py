@@ -80,9 +80,34 @@ def top_list():
 
     context = {
         'title': "Top List",
-        'animes': media.order_by(Media.grade.desc()).paginate(
+        'medias': media.order_by(Media.grade.desc()).paginate(
             page=page, per_page=per_page, error_out=False
         ),
+        'media_count': media_count,
+        'per_page': per_page,
+        'request_args': {k: v for k, v in request.args.items() if k != "page"}
+    }
+
+    return render_template('media/top_list.html', **context)
+
+
+@media_bp.route('/top_list/<string:media_type>', methods=['GET'])
+def top_list_by_type(media_type):
+    try:
+        media = Media.query.filter_by(type=MediaTypeEnum(media_type), show_in_top_list=True)
+    except ValueError:
+        return redirect(url_for('media_bp.top_list'))
+
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 50))
+    media_count = media.count()
+
+    context = {
+        'title': f"Top List - {media_type.capitalize()}",
+        'medias': media.order_by(Media.grade.desc()).paginate(
+            page=page, per_page=per_page, error_out=False
+        ),
+        'media_type': media_type,
         'media_count': media_count,
         'per_page': per_page,
         'request_args': {k: v for k, v in request.args.items() if k != "page"}
