@@ -76,7 +76,7 @@ def search_media():
 def top_list(media_type=None):
     if media_type:
         try:
-            media = Media.query.filter_by(type=MediaTypeEnum(media_type), show_in_top_list=True)
+            media = Media.query.filter_by(type=MediaTypeEnum(media_type), show_in_typed_top_list=True)
         except ValueError:
             return redirect(url_for('media_bp.top_list'))
     else:
@@ -176,6 +176,7 @@ def import_anime_from_mal():
         release = datetime.datetime.strptime(data['release'], '%b %d %Y').date()
         grade = int(request.form['grade'])
         show_in_top_list = request.form.get('show_in_top_list', 'off') == 'on'
+        show_in_typed_top_list = request.form.get('show_in_typed_top_list', 'off') == 'on'
 
         if not 0 <= grade <= 100:
             flash('Grade', category='danger')
@@ -190,6 +191,7 @@ def import_anime_from_mal():
             description=data['description'],
             type=MediaTypeEnum.anime.value,
             show_in_top_list=show_in_top_list,
+            show_in_typed_top_list=show_in_typed_top_list,
         )
 
         # Add categories
@@ -288,6 +290,10 @@ def create_media():
             media.description = description
         if grade := form.grade.data:
             media.grade = grade
+        if show_in_top_list := form.show_in_top_list.data:
+            media.show_in_top_list = show_in_top_list
+        if show_in_typed_top_list := form.show_in_typed_top_list.data:
+            media.show_in_typed_top_list = show_in_typed_top_list
         if img := form.img.data:
             # Save to S3
             s3_path = f"{uuid.uuid4()}_{secure_filename(img.filename)}"
@@ -323,6 +329,7 @@ def change_media(media_id):
         grade=media.grade,
         release=media.release,
         show_in_top_list=media.show_in_top_list,
+        show_in_typed_top_list=media.show_in_typed_top_list,
     )
 
     context = {
@@ -347,6 +354,8 @@ def change_media(media_id):
             media.grade = form.grade.data
         if form.show_in_top_list.data is not None and form.show_in_top_list.data != media.show_in_top_list:
             media.show_in_top_list = form.show_in_top_list.data
+        if form.show_in_typed_top_list.data is not None and form.show_in_typed_top_list.data != media.show_in_typed_top_list:
+            media.show_in_typed_top_list = form.show_in_typed_top_list.data
         if img := form.img.data:
             # Save to S3
             s3_path = f"{uuid.uuid4()}_{secure_filename(img.filename)}"

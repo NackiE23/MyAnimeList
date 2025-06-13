@@ -48,6 +48,16 @@
             {{ form.description(rows=6, maxlength=1750, placeholder="Description...") }}
         </p>
 
+        <p class="form__block">
+            {{ form.show_in_top_list.label(class="") }}
+            {{ form.show_in_top_list }}
+        </p>
+
+        <p class="form__block">
+            {{ form.show_in_typed_top_list.label(class="") }}
+            {{ form.show_in_typed_top_list }}
+        </p>
+
         <div class="form__block">
             Categories
             <div class="row">

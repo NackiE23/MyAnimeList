@@ -33,6 +33,7 @@ class Media(db.Model):
     img = db.Column(db.String(), default="/static/images/base/default.png", nullable=True)
     type = db.Column(Enum(MediaTypeEnum), nullable=False)
     show_in_top_list = db.Column(db.Boolean(), default=True)
+    show_in_typed_top_list = db.Column(db.Boolean(), default=True)
 
     added = db.Column(db.Date(), default=datetime.now)
 

@@ -20,6 +20,7 @@ class MediaForm(FlaskForm):
     release = DateField(label="Release", validators=[DataRequired()])
     img = FileField(label="Image")
     show_in_top_list = BooleanField(label="Show in Top List", default=True)
+    show_in_typed_top_list = BooleanField(label="Show in Typed Top List", default=True)
     submit = SubmitField(label="Save")
 
     def __init__(self, *args, **kwargs):
