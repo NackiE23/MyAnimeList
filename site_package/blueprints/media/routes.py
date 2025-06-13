@@ -72,42 +72,27 @@ def search_media():
 
 
 @media_bp.route('/top_list', methods=['GET'])
-def top_list():
-    page = int(request.args.get('page', 1))
-    per_page = int(request.args.get('per_page', 50))
-    media = Media.query.filter_by(show_in_top_list=True)
-    media_count = media.count()
-
-    context = {
-        'title': "Top List",
-        'medias': media.order_by(Media.grade.desc()).paginate(
-            page=page, per_page=per_page, error_out=False
-        ),
-        'media_count': media_count,
-        'per_page': per_page,
-        'request_args': {k: v for k, v in request.args.items() if k != "page"}
-    }
-
-    return render_template('media/top_list.html', **context)
-
-
 @media_bp.route('/top_list/<string:media_type>', methods=['GET'])
-def top_list_by_type(media_type):
-    try:
-        media = Media.query.filter_by(type=MediaTypeEnum(media_type), show_in_top_list=True)
-    except ValueError:
-        return redirect(url_for('media_bp.top_list'))
-
+def top_list(media_type=None):
+    if media_type:
+        try:
+            media = Media.query.filter_by(type=MediaTypeEnum(media_type), show_in_top_list=True)
+        except ValueError:
+            return redirect(url_for('media_bp.top_list'))
+    else:
+        media = Media.query.filter_by(show_in_top_list=True)
+    
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 50))
     media_count = media.count()
 
     context = {
-        'title': f"Top List - {media_type.capitalize()}",
+        'title': f"Top List {media_type.capitalize() if media_type else ''}",
         'medias': media.order_by(Media.grade.desc()).paginate(
             page=page, per_page=per_page, error_out=False
         ),
         'media_type': media_type,
+        'media_types': [t.value for t in MediaTypeEnum],
         'media_count': media_count,
         'per_page': per_page,
         'request_args': {k: v for k, v in request.args.items() if k != "page"}
@@ -320,6 +305,8 @@ def create_media():
         db.session.commit()
 
         flash(Markup(f"Media {media.name} has been added! <a href='{ url_for('media_bp.change_media', media_id=media.id) }'>Link here</a>"), category="success")
+    elif request.method == "POST":
+        flash("Please fill all fields", category="danger")
 
     return render_template('media/media_create.html', **context)
 

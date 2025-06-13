@@ -33,6 +33,7 @@
             <a href="{{ url_for('media_bp.home') }}" class="menu__links_link">Home</a>
             <a href="{{ url_for('media_bp.top_list') }}" class="menu__links_link">Top</a>
             {% if current_user.is_admin %}
+                <a href="{{ url_for('media_bp.create_media') }}" class="menu__links_link">Add media</a>
                 <a href="{{ url_for('media_bp.import_anime_from_mal') }}" class="menu__links_link">Import anime from MAL</a>
                 <a href="{{ url_for('admin.index') }}" class="menu__links_link">Admin</a>
             {% endif %}

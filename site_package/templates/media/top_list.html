@@ -6,6 +6,13 @@
 <div class="container text_align_center">
     <h1>Top Media{% if media_type %} ({{ media_type }}){% endif %}</h1>
 
+    <div class="media-type-toggle">
+        <a href="{{ url_for('media_bp.top_list') }}" class="{% if not media_type %}active{% endif %}">All</a>
+        {% for type in media_types %}
+            <a href="{{ url_for('media_bp.top_list', media_type=type) }}" class="{% if media_type == type %}active{% endif %}">{{ type|replace('_', ' ')|title }}</a>
+        {% endfor %}
+    </div>
+
     <div>
         Per page:
         {% set per_page_options = [50, 100, 200, media_count] %}

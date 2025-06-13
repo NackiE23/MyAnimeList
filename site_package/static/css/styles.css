@@ -652,6 +652,9 @@ body {
 .anime_list__item.manga img {
     border: 1px solid orange;
 }
+.anime_list__item.novel img {
+    border: 1px solid blue;
+}
 .anime_list__item.cartoon img {
     border: 1px solid teal;
 }
@@ -737,4 +740,31 @@ body {
 /* Categories */
 .categories_list__item {
     margin: 10px 0;
+}
+
+.media-type-toggle {
+    margin: 20px 0;
+}
+
+.media-type-toggle a {
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 0 4px;
+    text-decoration: none;
+    color: var(--gray);
+    border: var(--primary-border);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.media-type-toggle a:hover {
+    background-color: var(--secondary-light-bg);
+    color: var(--white);
+    border-color: var(--secondary);
+}
+
+.media-type-toggle a.active {
+    background-color: var(--secondary);
+    color: var(--white);
+    border-color: var(--secondary);
 }

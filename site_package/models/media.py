@@ -17,7 +17,7 @@ media_categories = db.Table(
 class MediaTypeEnum(enum.Enum):
     anime = 'anime'
     manga = 'manga'
-    light_novel = 'light_novel'
+    novel = 'novel'
     cartoon = 'cartoon'
 
 
