@@ -19,6 +19,7 @@ class MediaTypeEnum(enum.Enum):
     manga = 'manga'
     novel = 'novel'
     cartoon = 'cartoon'
+    movie = 'movie'
 
 
 class Media(db.Model):
