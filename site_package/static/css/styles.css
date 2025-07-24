@@ -446,8 +446,8 @@ body {
 .media_gallery {
     text-align: center;
     padding: 20px;
-    background: #111;
-    color: white;
+    background: var(--main-bg);
+    color: var(--white);
 }
 
 .media_gallery__header {
