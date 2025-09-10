@@ -26,6 +26,31 @@
         {% endfor %}
     </div>
 
+    <div>
+        Sort by:
+        {% set current_sort = request.args.get('sort', 'grade_down') %}
+        {% set sort_options = {
+            'grade_down': 'Grade ↓',
+            'grade_up': 'Grade ↑',
+            'release_up': 'Release ↑',
+            'release_down': 'Release ↓',
+            'added_up': 'Added ↑',
+            'added_down': 'Added ↓'
+        } %}
+        {% for key, label in sort_options.items() %}
+            {% if current_sort == key %}
+                {{ label }}
+            {% else %}
+                {% if media_type %}
+                    <a href="{{ url_for('media_bp.top_list', media_type=media_type, per_page=per_page, sort=key, page=1) }}">{{ label }}</a>
+                {% else %}
+                    <a href="{{ url_for('media_bp.top_list', per_page=per_page, sort=key, page=1) }}">{{ label }}</a>
+                {% endif %}
+            {% endif %}
+            {% if not loop.last %} | {% endif %}
+        {% endfor %}
+    </div>
+
     {% include "media/parts/top_list_pages.html" %}
 
     <div class="anime_list">

@@ -86,9 +86,24 @@ def top_list(media_type=None):
     per_page = int(request.args.get('per_page', 50))
     media_count = media.count()
 
+    # Ordering
+    sorting = request.args.get('sort', 'grade_down')
+    if sorting == "grade_up":
+        media = media.order_by(Media.grade.asc())
+    elif sorting == "release_up":
+        media = media.order_by(Media.release.asc())
+    elif sorting == "release_down":
+        media = media.order_by(Media.release.desc())
+    elif sorting == "added_up":
+        media = media.order_by(Media.added.asc())
+    elif sorting == "added_down":
+        media = media.order_by(Media.added.desc())
+    else:
+        media = media.order_by(Media.grade.desc())
+
     context = {
         'title': f"Top List {media_type.capitalize() if media_type else ''}",
-        'medias': media.order_by(Media.grade.desc()).paginate(
+        'medias': media.paginate(
             page=page, per_page=per_page, error_out=False
         ),
         'media_type': media_type,
