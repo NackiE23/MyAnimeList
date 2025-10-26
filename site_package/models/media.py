@@ -19,6 +19,7 @@ class MediaTypeEnum(enum.Enum):
     manga = 'manga'
     novel = 'novel'
     cartoon = 'cartoon'
+    animated_series = 'animated_series'
     movie = 'movie'
 
 
@@ -106,6 +107,7 @@ class RelationCategoryEnum(enum.Enum):
     SPIN_OFF = "spin-off"
     SIDE_STORY = "side_story"
     ADAPTATION = "adaptation"
+    SOURCE = "source"
     OTHER = "other"
 
     @classmethod

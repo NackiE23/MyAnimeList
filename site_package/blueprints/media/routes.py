@@ -107,7 +107,7 @@ def top_list(media_type=None):
             page=page, per_page=per_page, error_out=False
         ),
         'media_type': media_type,
-        'media_types': [t.value for t in MediaTypeEnum],
+        'media_types': [t[0].value for t in Media.query.with_entities(Media.type).distinct().all()],
         'media_count': media_count,
         'per_page': per_page,
         'request_args': {k: v for k, v in request.args.items() if k != "page"}

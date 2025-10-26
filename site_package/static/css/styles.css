@@ -675,7 +675,7 @@ body {
 .anime_list__item.novel img {
     border: 1px solid blue;
 }
-.anime_list__item.cartoon img {
+.anime_list__item.animated_series img {
     border: 1px solid teal;
 }
 
