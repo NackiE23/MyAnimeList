@@ -318,13 +318,13 @@ def create_media():
             )
 
             media.img = f"{current_app.config['S3_DOMAIN']}/{s3_path}"
+        db.session.add(media)
+
         if categories := request.form.get('id_categories', '').split():
             for category_id in categories:
                 media.categories.append(MediaCategory.query.get(category_id))
 
-        db.session.add(media)
         db.session.commit()
-
         flash(Markup(f"Media {media.name} has been added! <a href='{ url_for('media_bp.change_media', media_id=media.id) }'>Link here</a>"), category="success")
     elif request.method == "POST":
         flash("Please fill all fields", category="danger")
