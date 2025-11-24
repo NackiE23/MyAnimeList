@@ -27,9 +27,7 @@ def parse_season_page():
 
 
 def parse_mal_anime_page(url):
-    print("Parsing URL:", url)
     text = requests.get(url).text
-    print("Fetched page length:", len(text))
     soup = BeautifulSoup(text, 'lxml')
 
     content_wrapper = soup.find('div', id='contentWrapper')
@@ -59,10 +57,20 @@ def parse_mal_anime_page(url):
     if not release:
         release = soup.find('span', string='Published:')
     if release:
-        release = release.parent.text
-        release = re.sub(r'\s+', ' ', release)  # Remove extra spaces
-        print("Release raw:", release)
-        release = re.search(r'[A-Z][a-z]{2} \d{1,2}, \d{4}', release).group().replace(',', '')
+        date_text = release.parent.text
+        date_text = re.sub(r'\s+', ' ', date_text)  # Remove extra spaces
+        primary_match = re.search(r'[A-Z][a-z]{2} \d{1,2}, \d{4}', date_text)
+
+        if primary_match:
+            release = primary_match.group().replace(',', '')
+        else:
+            # Matches "Month Year" (e.g., Sep 2007) ---
+            fallback_match = re.search(r'[A-Z][a-z]{2} \d{4}', date_text)
+
+            if fallback_match:
+                month_year_string = fallback_match.group()
+                month, year = month_year_string.split(' ')
+                release = f'{month} 01 {year}'
     else:
         release = 'Jan 01 2000'
 
