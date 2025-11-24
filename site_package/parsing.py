@@ -59,6 +59,7 @@ def parse_mal_anime_page(url):
     if release:
         release = release.parent.text
         release = re.sub(r'\s+', ' ', release)  # Remove extra spaces
+        print("Release raw:", release)
         release = re.search(r'[A-Z][a-z]{2} \d{1,2}, \d{4}', release).group().replace(',', '')
     else:
         release = 'Jan 01 2000'
