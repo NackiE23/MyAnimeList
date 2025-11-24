@@ -27,7 +27,9 @@ def parse_season_page():
 
 
 def parse_mal_anime_page(url):
+    print("Parsing URL:", url)
     text = requests.get(url).text
+    print("Fetched page length:", len(text))
     soup = BeautifulSoup(text, 'lxml')
 
     content_wrapper = soup.find('div', id='contentWrapper')
